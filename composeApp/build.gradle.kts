@@ -16,7 +16,7 @@ kotlin {
     sourceSets {
 
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.compose.preview)
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
@@ -25,13 +25,13 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             // Compose
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.components.resources)
+            implementation(libs.compose.preview)
 
             // Koin
             api(libs.koin.core)
@@ -74,7 +74,7 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     dependencies {
-        debugImplementation(compose.uiTooling)
+        debugImplementation(libs.compose.preview)
     }
 }
 

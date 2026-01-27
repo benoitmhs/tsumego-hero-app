@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -29,7 +30,6 @@ import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun THTopBar(

@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.mrsanglier.tsumegohero.data.model.BoardSize
 import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
 
-internal fun DrawScope.drawBoardGrid2(
+internal fun DrawScope.drawBoardGrid(
     boardSize: BoardSize,
     cropBoard: CropBoard?,
     style: BoardStyle,

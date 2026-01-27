@@ -37,8 +37,8 @@ private fun GameScreen(
         ) {
             Board(
                 cropBoard = CropBoard(
-                    Cell(x = 19, y = 7),
-                    corner = Corner.TopLeft,
+                    Cell(x = 11, y = 7),
+                    corner = Corner.BottomRight,
                 )
             )
         }

@@ -1,14 +1,23 @@
 package com.mrsanglier.tsumegohero.game.game.composable
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.round
 import com.mrsanglier.tsumegohero.data.model.BoardSize
+import com.mrsanglier.tsumegohero.data.model.Cell
 import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
+import org.jetbrains.compose.resources.imageResource
 
 internal fun DrawScope.drawBoardGrid(
     boardSize: BoardSize,
     cropBoard: CropBoard?,
     style: BoardStyle,
+    blackStones: Set<Cell>,
+    whiteStones: Set<Cell>,
+    blackStoneImageBitmap: ImageBitmap,
+    whiteStoneImageBitmap: ImageBitmap,
 ) {
     val croppedBoardSize = getBoardCroppedSize(boardSize, cropBoard)
 
@@ -43,7 +52,7 @@ internal fun DrawScope.drawBoardGrid(
         )
     }
 
-    // Draw circle markers
+    // Draw hoshi
     for (x in 0..<croppedBoardSize) {
         for (y in 0..<croppedBoardSize) {
             if ((x - 3) % 6 == 0 && (y - 3) % 6 == 0) {
@@ -55,9 +64,38 @@ internal fun DrawScope.drawBoardGrid(
             }
         }
     }
+
+    // Draw Stones
+    val stoneSize = cellSpacing * STONE_SIZE_RATIO
+    for (stone in blackStones) {
+        drawImage(
+            image = blackStoneImageBitmap,
+            dstSize = IntSize(
+                width = stoneSize.toInt(),
+                height = stoneSize.toInt(),
+            ),
+            dstOffset = (Offset(
+                x = (stone.x * cellSpacing) - stoneSize / 2,
+                y = (stone.y * cellSpacing) - stoneSize / 2,
+            ) + startOffset).round(),
+        )
+    }
+    for (stone in whiteStones) {
+        drawImage(
+            image = whiteStoneImageBitmap,
+            dstSize = IntSize(
+                width = stoneSize.toInt(),
+                height = stoneSize.toInt(),
+            ),
+            dstOffset = (Offset(
+                x = (stone.x * cellSpacing) - stoneSize / 2,
+                y = (stone.y * cellSpacing) - stoneSize / 2,
+            ) + startOffset).round(),
+        )
+    }
 }
 
-private fun getBoardCroppedSize(
+internal fun getBoardCroppedSize(
     boardSize: BoardSize,
     cropBoard: CropBoard?,
 ): Int {
@@ -82,3 +120,4 @@ private fun getBorderSpacing(boardSize: BoardSize, cropBoard: CropBoard?): Float
 private const val BORDER_SPACING_COEF: Float = 1f
 
 private const val LINE_STROKE_COEF: Float = 19 * 2f
+private const val STONE_SIZE_RATIO: Float = 0.95f

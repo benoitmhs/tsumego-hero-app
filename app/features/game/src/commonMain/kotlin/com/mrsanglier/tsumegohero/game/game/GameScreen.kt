@@ -36,10 +36,29 @@ private fun GameScreen(
             contentAlignment = Alignment.Center,
         ) {
             Board(
+                whiteStones = setOf(
+                    Cell(0, 4),
+                    Cell(1, 5),
+                    Cell(2, 5),
+                    Cell(2, 3),
+                    Cell(3, 4),
+                    Cell(4, 4),
+                    Cell(4, 3),
+                    Cell(4, 2),
+                ),
+                blackStones = setOf(
+                    Cell(0, 3),
+                    Cell(1, 1),
+                    Cell(1, 3),
+                    Cell(1, 4),
+                    Cell(2, 4),
+                    Cell(3, 3),
+                    Cell(3, 2),
+                ),
                 cropBoard = CropBoard(
-                    Cell(x = 11, y = 7),
-                    corner = Corner.BottomRight,
-                )
+                    Cell(x = 15, y = 4),
+                    corner = Corner.TopLeft,
+                ),
             )
         }
     }

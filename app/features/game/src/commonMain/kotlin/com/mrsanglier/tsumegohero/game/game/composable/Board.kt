@@ -2,16 +2,24 @@ package com.mrsanglier.tsumegohero.game.game.composable
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.round
+import androidx.compose.ui.unit.toSize
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 import com.mrsanglier.tsumegohero.data.model.BoardSize
 import com.mrsanglier.tsumegohero.data.model.Cell
@@ -27,9 +35,13 @@ fun Board(
     cropBoard: CropBoard? = null,
     blackStones: Set<Cell> = emptySet(),
     whiteStones: Set<Cell> = emptySet(),
+    onClickCell: (Cell) -> Unit = {},
 ) {
     val blackStoneImageBitmap = imageResource(style.blackStoneRes)
     val whiteStoneImageBitmap = imageResource(style.whiteStoneRes)
+    val scaleFactor = remember(boardSize, cropBoard) {
+        cropBoard.getScaleFactor(boardSize)
+    }
 
     Box(
         modifier = modifier
@@ -45,25 +57,77 @@ fun Board(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .rotate(cropBoard?.corner.getRotation()),
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        // Reverse scaling to get click position in full board
+                        val scaledOffset = unscaleOffset(
+                            offset = offset,
+                            scale = scaleFactor,
+                            pivot = cropBoard?.corner.getScalingPivot(size.toSize()),
+                        )
+
+                        val cellSize = size.width / (BORDER_SPACING_COEF + boardSize.size)
+
+                        // Remove border offset
+                        val borderDiff = ((cellSize * BORDER_SPACING_COEF) - (cellSize / 2)).coerceAtLeast(0f)
+                        val rawOffset = scaledOffset - Offset(borderDiff, borderDiff)
+
+                        // Convert into Cell
+                        val (x, y) = rawOffset.div(cellSize).let { (xf, yf) -> xf.toInt() to yf.toInt() }
+                        if (x in 0..<boardSize.size && y in 0..<boardSize.size) {
+                            onClickCell(Cell(x, y))
+                        }
+                    }
+                },
         ) {
-            drawBoardGrid(
-                boardSize = boardSize,
-                cropBoard = cropBoard,
-                style = style,
-                blackStones = blackStones,
-                whiteStones = whiteStones,
-                blackStoneImageBitmap = blackStoneImageBitmap,
-                whiteStoneImageBitmap = whiteStoneImageBitmap,
-            )
+            scale(
+                scaleX = scaleFactor,
+                scaleY = scaleFactor,
+                pivot = cropBoard?.corner.getScalingPivot(size),
+            ) {
+                drawBoard(
+                    boardSize = boardSize,
+                    style = style,
+                    blackStones = blackStones,
+                    whiteStones = whiteStones,
+                    blackStoneImageBitmap = blackStoneImageBitmap,
+                    whiteStoneImageBitmap = whiteStoneImageBitmap,
+                )
+            }
         }
     }
 }
 
-private fun Corner?.getRotation(): Float =
-    when (this) {
-        Corner.TopLeft, null -> 0f
-        Corner.TopRight -> 90f
-        Corner.BottomLeft -> -90f
-        Corner.BottomRight -> 180f
+private fun CropBoard?.getScaleFactor(boardSize: BoardSize): Float {
+    if (this == null) return 1f
+    val originSize = boardSize.size
+
+    val (scaledWidth, scaledHeight) = when (this.corner) {
+        Corner.TopLeft -> cellRef.x to cellRef.y
+        Corner.TopRight -> originSize - cellRef.x to cellRef.y
+        Corner.BottomLeft -> cellRef.x to originSize - cellRef.y
+        Corner.BottomRight -> originSize - cellRef.x to originSize - cellRef.y
     }
+    val scaledSize = maxOf(scaledWidth, scaledHeight)
+
+    if (scaledSize == originSize) return 1f
+
+    return (originSize - 1 + (2 * BORDER_SPACING_COEF)) / (scaledSize - 1 + BORDER_SPACING_COEF + 0.5f)
+}
+
+private fun Corner?.getScalingPivot(size: Size): Offset {
+    return when (this) {
+        Corner.TopLeft, null -> Offset.Zero
+        Corner.TopRight -> Offset(size.width, 0f)
+        Corner.BottomLeft -> Offset(0f, size.height)
+        Corner.BottomRight -> Offset(size.width, size.height)
+    }
+}
+
+private fun unscaleOffset(
+    offset: Offset,
+    scale: Float,
+    pivot: Offset
+): Offset {
+    return (offset - pivot) / scale + pivot
+}

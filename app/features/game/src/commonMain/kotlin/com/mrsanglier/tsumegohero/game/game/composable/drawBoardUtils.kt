@@ -8,53 +8,48 @@ import androidx.compose.ui.unit.round
 import com.mrsanglier.tsumegohero.data.model.BoardSize
 import com.mrsanglier.tsumegohero.data.model.Cell
 import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
-import org.jetbrains.compose.resources.imageResource
 
-internal fun DrawScope.drawBoardGrid(
+internal fun DrawScope.drawBoard(
     boardSize: BoardSize,
-    cropBoard: CropBoard?,
     style: BoardStyle,
     blackStones: Set<Cell>,
     whiteStones: Set<Cell>,
     blackStoneImageBitmap: ImageBitmap,
     whiteStoneImageBitmap: ImageBitmap,
 ) {
-    val croppedBoardSize = getBoardCroppedSize(boardSize, cropBoard)
-
-    val cellSpacing = size.width / (croppedBoardSize - 1 + getBorderSpacing(boardSize, cropBoard))
+    val cellSpacing = minOf(size.width, size.height) / (boardSize.size - 1 + 2 * BORDER_SPACING_COEF)
     val boarderSpacing = cellSpacing * BORDER_SPACING_COEF
-    val lineStroke = LINE_STROKE_COEF / croppedBoardSize
+
+    val startOffset = Offset(x = boarderSpacing, y = boarderSpacing)
+    val endOffset = boarderSpacing
 
     // Draw column lines
-    val startOffset = Offset(x = boarderSpacing, y = boarderSpacing)
-    val endOffset = if (croppedBoardSize != boardSize.size) 0f else boarderSpacing
-
-    for (x in 0..<croppedBoardSize) {
+    for (x in 0..<boardSize.size) {
         val startOffset = startOffset + Offset(x = x * cellSpacing, y = 0f)
         val endOffset = startOffset.copy(y = this.size.height - endOffset)
         drawLine(
             color = style.gridColor,
             start = startOffset,
             end = endOffset,
-            strokeWidth = lineStroke,
+            strokeWidth = LINE_STROKE,
         )
     }
 
     // Draw row lines
-    for (y in 0..<croppedBoardSize) {
+    for (y in 0..<boardSize.size) {
         val startOffset = startOffset + Offset(x = 0f, y = y * cellSpacing)
         val endOffset = startOffset.copy(x = this.size.width - endOffset)
         drawLine(
             color = style.gridColor,
             start = startOffset,
             end = endOffset,
-            strokeWidth = lineStroke,
+            strokeWidth = LINE_STROKE,
         )
     }
 
     // Draw hoshi
-    for (x in 0..<croppedBoardSize) {
-        for (y in 0..<croppedBoardSize) {
+    for (x in 0..<boardSize.size) {
+        for (y in 0..<boardSize.size) {
             if ((x - 3) % 6 == 0 && (y - 3) % 6 == 0) {
                 drawCircle(
                     center = Offset(x = x * cellSpacing, y = y * cellSpacing) + startOffset,
@@ -95,29 +90,8 @@ internal fun DrawScope.drawBoardGrid(
     }
 }
 
-internal fun getBoardCroppedSize(
-    boardSize: BoardSize,
-    cropBoard: CropBoard?,
-): Int {
-    val (x, y) = when (cropBoard?.corner) {
-        Corner.TopLeft -> cropBoard.cellRef.x to cropBoard.cellRef.y
-        Corner.TopRight -> (boardSize.size - cropBoard.cellRef.x) to cropBoard.cellRef.y
-        Corner.BottomLeft -> cropBoard.cellRef.x to (boardSize.size - cropBoard.cellRef.y)
-        Corner.BottomRight -> (boardSize.size - cropBoard.cellRef.x) to (boardSize.size - cropBoard.cellRef.y)
-        null -> boardSize.size to boardSize.size
-    }
-    return maxOf(x, y)
-}
-
-private fun getBorderSpacing(boardSize: BoardSize, cropBoard: CropBoard?): Float {
-    val cropBoardSize = getBoardCroppedSize(boardSize, cropBoard)
-    val isFullBoard = boardSize.size == cropBoardSize
-
-    return if (isFullBoard) 2 * BORDER_SPACING_COEF else 0.5f + BORDER_SPACING_COEF
-}
-
 /** Size ratio of spacing border compare to cell spacing **/
-private const val BORDER_SPACING_COEF: Float = 1f
+internal const val BORDER_SPACING_COEF: Float = 1f
 
-private const val LINE_STROKE_COEF: Float = 19 * 2f
+private const val LINE_STROKE: Float = 2f
 private const val STONE_SIZE_RATIO: Float = 0.95f

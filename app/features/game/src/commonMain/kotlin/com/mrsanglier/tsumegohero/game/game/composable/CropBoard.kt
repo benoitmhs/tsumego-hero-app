@@ -1,6 +1,5 @@
 package com.mrsanglier.tsumegohero.game.game.composable
 
-import com.mrsanglier.tsumegohero.data.model.BoardSize
 import com.mrsanglier.tsumegohero.data.model.Cell
 
 data class CropBoard(

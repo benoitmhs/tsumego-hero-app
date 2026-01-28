@@ -7,23 +7,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toSize
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
-import com.mrsanglier.tsumegohero.data.model.BoardSize
-import com.mrsanglier.tsumegohero.data.model.Cell
 import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
+import com.mrsanglier.tsumegohero.game.model.BoardSize
+import com.mrsanglier.tsumegohero.game.model.Cell
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 

@@ -64,6 +64,7 @@ kotlin {
             implementation(projects.kmp.domain.authentication)
             implementation(projects.kmp.domain.common)
             implementation(projects.kmp.domain.profile)
+            implementation(projects.kmp.domain.game)
         }
     }
 }

@@ -5,6 +5,7 @@ import com.mrsanglier.tsumegohero.domain.authenticationModule
 import com.mrsanglier.tsumegohero.domain.authentication.domainAuthenticationModule
 import com.mrsanglier.tsumegohero.dashboard.di.dashboardModule
 import com.mrsanglier.tsumegohero.domain.appsettings.domainAppSettingsModule
+import com.mrsanglier.tsumegohero.game.domainGameModule
 import com.mrsanglier.tsumegohero.game.gameModule
 import com.mrsanglier.tsumegohero.localdatasources.di.localDatasourceModule
 import com.mrsanglier.tsumegohero.localdatasources.di.localPlatformModule
@@ -34,6 +35,7 @@ fun THKoinApplication(
                 domainAppSettingsModule,
                 domainAuthenticationModule,
                 domainProfileModule,
+                domainGameModule,
                 authenticationModule,
                 dashboardModule,
                 gameModule,

@@ -49,7 +49,7 @@ kotlin {
             implementation(projects.app.coreUi)
             implementation(projects.kmp.core)
             implementation(projects.kmp.data)
-            implementation(projects.kmp.domain.authentication)
+            implementation(projects.kmp.domain.game)
         }
     }
 }

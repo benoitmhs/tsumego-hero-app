@@ -5,13 +5,14 @@ import com.mrsanglier.tsumegohero.app.coreui.resources.common_error_unknown
 import com.mrsanglier.tsumegohero.app.coreui.resources.connection_error_emailFormatInvalid
 import com.mrsanglier.tsumegohero.app.coreui.resources.connection_error_emailTaken
 import com.mrsanglier.tsumegohero.app.coreui.resources.connection_error_invalidCredential
-import com.mrsanglier.tsumegohero.core.error.FOAppError
-import com.mrsanglier.tsumegohero.core.error.FOError
+import com.mrsanglier.tsumegohero.core.error.THAppError
+import com.mrsanglier.tsumegohero.core.error.THError
+import com.mrsanglier.tsumegohero.core.error.THGameError
 import com.mrsanglier.tsumegohero.core.error.THRemoteError
 import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
 import com.mrsanglier.tsumegohero.coreui.resources.THString
 
-fun FOError.messageText(): TextSpec? = when (this.code) {
+fun THError.messageText(): TextSpec? = when (this.code) {
     // Remote error
     THRemoteError.Code.ErrorNetwork -> THString.common_error_noNetwork
     THRemoteError.Code.EmailAlreadyTaken -> THString.connection_error_emailTaken
@@ -27,10 +28,11 @@ fun FOError.messageText(): TextSpec? = when (this.code) {
     THRemoteError.Code.InvalidShareCode, // TODO: error strings
     THRemoteError.Code.NotFound, // TODO: error strings
     THRemoteError.Code.ServerError, // TODO: error strings
+    THGameError.Code.SgfFormatNotSupported, // TODO: error strings
         -> THString.common_error_unknown
 
     // App error
-    FOAppError.Code.ObjectNotFound -> THString.common_error_unknown
-    FOAppError.Code.InvalidEmailFormat -> THString.connection_error_emailFormatInvalid
-    FOAppError.Code.SilentError -> null
+    THAppError.Code.ObjectNotFound -> THString.common_error_unknown
+    THAppError.Code.InvalidEmailFormat -> THString.connection_error_emailFormatInvalid
+    THAppError.Code.SilentError -> null
 }?.toTextSpec()

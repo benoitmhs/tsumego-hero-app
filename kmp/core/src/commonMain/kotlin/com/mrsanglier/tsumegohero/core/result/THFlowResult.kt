@@ -1,6 +1,6 @@
 package com.mrsanglier.tsumegohero.core.result
 
-import com.mrsanglier.tsumegohero.core.error.FOError
+import com.mrsanglier.tsumegohero.core.error.THError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -37,7 +37,7 @@ sealed class THFlowResult<out T> {
      * @property error The throwable that caused the failure or null if non applicable
      * @property failureData The final data or null if non applicable
      */
-    data class Failure<out T>(val error: FOError? = null, val failureData: T? = null) : THFlowResult<T>()
+    data class Failure<out T>(val error: THError? = null, val failureData: T? = null) : THFlowResult<T>()
 
     /**
      * Common getter for the data of any result states.
@@ -96,7 +96,7 @@ sealed class THFlowResult<out T> {
          * @see [Flow.map]
          */
         inline fun <T, R> Flow<THFlowResult<T>>.mapResult(
-            crossinline mapError: suspend (error: FOError?) -> FOError? = ::mapError,
+            crossinline mapError: suspend (error: THError?) -> THError? = ::mapError,
             crossinline mapLoading: suspend (progress: Float?) -> Float? = ::mapLoading,
             crossinline mapSuccess: suspend (value: T) -> R = ::mapSuccess,
         ): Flow<THFlowResult<R>> = transformResult(
@@ -125,7 +125,7 @@ internal suspend fun <T, R> mapSuccess(data: T): R = data as R
 
 @Suppress("RedundantSuspendModifier")
 @PublishedApi
-internal suspend fun mapError(error: FOError?): FOError? = error
+internal suspend fun mapError(error: THError?): THError? = error
 
 @Suppress("RedundantSuspendModifier")
 @PublishedApi

@@ -1,23 +1,21 @@
 package com.mrsanglier.tsumegohero.core.error
 
-class THAppError(
+class THGameError(
     val title: String? = null,
     override val message: String? = null,
     override val cause: Throwable? = null,
-    override val code: THAppError.Code,
+    override val code: Code,
 ) : THError(message, cause, code) {
     enum class Code : THErrorCode {
-        ObjectNotFound,
-        InvalidEmailFormat,
-        SilentError,
+        SgfFormatNotSupported,
     }
 }
 
-fun THAppError.Code.toError(
+fun THGameError.Code.toError(
     title: String? = null,
     message: String? = null,
     cause: Throwable? = null,
-): THAppError = THAppError(
+): THGameError = THGameError(
     title = title,
     message = message,
     cause = cause,

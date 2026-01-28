@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
-import com.mrsanglier.tsumegohero.data.model.BoardSize
-import com.mrsanglier.tsumegohero.data.model.Cell
 import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
+import com.mrsanglier.tsumegohero.game.model.BoardSize
+import com.mrsanglier.tsumegohero.game.model.Cell
 
 internal fun DrawScope.drawBoard(
     boardSize: BoardSize,

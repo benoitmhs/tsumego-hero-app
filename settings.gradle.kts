@@ -44,5 +44,6 @@ include(":kmp:domain:appsettings")
 include(":kmp:domain:authentication")
 include(":kmp:domain:common")
 include(":kmp:domain:profile")
+include(":kmp:domain:game")
 
 rootProject.name = "TsumegoHero"

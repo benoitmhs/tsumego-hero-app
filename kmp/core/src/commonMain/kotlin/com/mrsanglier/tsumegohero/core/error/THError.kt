@@ -1,9 +1,9 @@
 package com.mrsanglier.tsumegohero.core.error
 
-sealed class FOError(
+sealed class THError(
     message: String?,
     cause: Throwable?,
-    open val code: FOErrorCode
+    open val code: THErrorCode
 ) : Exception(message, cause)
 
-sealed interface FOErrorCode
+sealed interface THErrorCode

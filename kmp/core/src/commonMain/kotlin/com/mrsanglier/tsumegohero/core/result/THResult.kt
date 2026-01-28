@@ -1,7 +1,7 @@
 package com.mrsanglier.tsumegohero.core.result
 
 import co.touchlab.kermit.Logger
-import com.mrsanglier.tsumegohero.core.error.FOError
+import com.mrsanglier.tsumegohero.core.error.THError
 
 /**
  * Generic result wrapper to wrap data with a status.
@@ -25,7 +25,7 @@ sealed class THResult<out T> {
      * @property throwable The throwable that caused the failure or null if non applicable
      * @property failureData The final data or null if non applicable
      */
-    data class Failure<out T>(val error: FOError? = null, val failureData: T? = null) : THResult<T>()
+    data class Failure<out T>(val error: THError? = null, val failureData: T? = null) : THResult<T>()
 
     /**
      * Common getter for the data of any result states.
@@ -50,7 +50,7 @@ sealed class THResult<out T> {
 
     companion object Companion {
         suspend fun <T> suspendWithFOResult(
-            mapError: (FOError) -> FOError = { it },
+            mapError: (THError) -> THError = { it },
             block: suspend () -> T,
         ): THResult<T> = suspendFOResult(
             mapError = mapError,
@@ -59,12 +59,12 @@ sealed class THResult<out T> {
         }
 
         suspend fun <T> suspendFOResult(
-            mapError: (FOError) -> FOError = { it },
+            mapError: (THError) -> THError = { it },
             block: suspend () -> THResult<T>,
         ): THResult<T> =
             try {
                 block()
-            } catch (e: FOError) {
+            } catch (e: THError) {
                 val piError = mapError(e)
                 Logger.e { e.toString() }
                 Logger.e { piError.stackTraceToString() }
@@ -72,24 +72,24 @@ sealed class THResult<out T> {
             }
 
         inline fun <reified T> catchResult(
-            mapError: (FOError) -> FOError = { it },
+            mapError: (THError) -> THError = { it },
             block: () -> T,
         ): THResult<T> =
             try {
                 Success(block())
-            } catch (e: FOError) {
+            } catch (e: THError) {
                 val piError = mapError(e)
                 Logger.e { piError.stackTraceToString() }
                 Failure(piError)
             }
 
         fun <T> withFOResult(
-            mapError: (FOError) -> FOError = { it },
+            mapError: (THError) -> THError = { it },
             block: () -> T,
         ): THResult<T> =
             try {
                 Success(block())
-            } catch (e: FOError) {
+            } catch (e: THError) {
                 val piError = mapError(e)
                 Logger.e { piError.stackTraceToString() }
                 Failure(piError)

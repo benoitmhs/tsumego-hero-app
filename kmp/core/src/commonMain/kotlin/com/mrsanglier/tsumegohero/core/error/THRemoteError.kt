@@ -5,8 +5,8 @@ class THRemoteError(
     val title: String? = null,
     override val message: String? = null,
     override val cause: Throwable? = null,
-) : FOError(message, cause, code) {
-    enum class Code : FOErrorCode {
+) : THError(message, cause, code) {
+    enum class Code : THErrorCode {
         AuthenticationRequired,
         BadRequest,
         EmailAlreadyTaken,

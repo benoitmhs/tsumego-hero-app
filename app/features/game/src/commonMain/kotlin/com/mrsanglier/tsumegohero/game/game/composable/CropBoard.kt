@@ -1,6 +1,6 @@
 package com.mrsanglier.tsumegohero.game.game.composable
 
-import com.mrsanglier.tsumegohero.data.model.Cell
+import com.mrsanglier.tsumegohero.game.model.Cell
 
 data class CropBoard(
     val cellRef: Cell,

@@ -57,7 +57,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @Composable
 fun THButton(
-    text: TextSpec,
+    text: TextSpec?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     status: ButtonStatus = ButtonStatus.Enabled,

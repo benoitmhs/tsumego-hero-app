@@ -9,6 +9,7 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotest = { id = "io.kotest", version.ref = "kotest" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
@@ -38,12 +39,13 @@ junit = "4.13.2"
 kermit = "2.0.5"
 koin = "4.1.0-RC1"
 koin_annotations = "2.0.1-RC1"
+kotest = "6.1.2"
 kotlin = "2.1.0" ## Update to 2.1.20 when compose multiplatform will be ready (last version 1.8.0-rc01)
 kotlinx-coroutines = "1.10.2"
 kotlinxSerializationJson = "1.8.1"
 ktor = "3.1.2"
 ksp = "2.1.0-1.0.29" ## Wait compose multiplatform supported Kotlin 2.1.20
-material3="1.9.0"
+material3 = "1.9.0"
 jetbrainsKotlinJvm = "2.1.0" ## Wait compose multiplatform supported Kotlin 2.1.20
 navigationCompose = "2.9.0-alpha17"
 qrose = "1.0.1"
@@ -72,7 +74,7 @@ kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-plugin"}
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-plugin" }
 compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-plugin" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-plugin" }
@@ -99,6 +101,10 @@ koin-coroutines = { group = "io.insert-koin", name = "koin-core-coroutines", ver
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin" }
+
+kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-junit-runner = { module = "io.kotest:kotest-runner-junit6", version.ref = "kotest" }
 
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }

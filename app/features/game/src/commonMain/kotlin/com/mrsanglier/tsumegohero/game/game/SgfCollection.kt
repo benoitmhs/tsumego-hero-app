@@ -1,0 +1,81 @@
+package com.mrsanglier.tsumegohero.game.game
+
+internal val sgfCollection: Array<String> = arrayOf(
+    """
+(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]
+RU[Japanese]SZ[19]KM[0.00]
+PW[White]PB[Black]AW[ba][ea][ab][eb][ec][ed][ae][be][ce][de]AB[ca][da][db][dc][ad][bd][cd][dd]
+(;B[bc]
+;W[bb]
+;B[cb]C[+])
+(;B[bb]
+;W[bc]
+;B[cb]
+;W[ac])
+(;B[cb]
+;W[bc]
+;B[bb]
+;W[ac])
+(;B[cc]
+;W[bb])
+(;B[ac]
+;W[bb]))
+""".trimIndent(),
+    "(;FF[4]GM[1]SZ[19]ST[2]RU[Japanese]KM[0.00]PW[White]PB[Black]AB[ca][cb][cc][dc][ea][ec][fb]AW[ba][bb][bc][bd][cd][dd][ed][fc][gb][gc];B[db]C[+])",
+    """
+    (;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]
+    RU[Japanese]SZ[19]KM[0.00]
+    PW[White]PB[Black]AW[pa][lb][mb][rb][lc][rc][ld][od][qd][le][qe][mf][nf][qf][pg][nh][ph]AB[nb][ob][qb][mc][pc][qc][md][pd][ne][pe][pf]
+    (;B[nd]
+    ;W[qa]
+    ;B[oc]C[+])
+    (;B[oc]
+    ;W[nd]
+    ;B[qa]
+    ;W[me])
+    (;B[qa]
+    ;W[oe]
+    ;B[of]
+    ;W[me]))
+    """.trimIndent(),
+    """
+        (;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]
+        RU[Japanese]SZ[19]KM[0.00]
+        PW[White]PB[Black]AW[lc][mc][nc][oc][pd][ke][pe][qe][re][nf][of][rf][qg][ph][qh]AB[pc][qc][md][nd][od][qd][oe][pf][qf][og][pg][rg][rh][qi]
+        (;B[ng]
+        ;W[mf]
+        (;B[ld]
+        ;W[kd]
+        (;B[rd]C[+])
+        (;B[sf]C[+])
+        (;B[se]C[+]))
+        (;B[rd]C[+])
+        (;B[se]C[+])
+        (;B[sf]C[+]))
+        (;B[oh]
+        ;W[ld])
+        (;B[rd]
+        ;W[oh]))
+    """.trimIndent(),
+    """
+    (;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]
+RU[Japanese]SZ[19]KM[0.00]
+PW[Weiß]PB[Schwarz]AW[db][eb][cc][fc]AB[cb][fb][dc][ec]
+(;B[da]
+;W[bb]
+(;B[ea]C[+])
+(;B[ca]C[+]))
+(;B[ea]
+;W[gb]
+(;B[da]C[+])
+(;B[fa]C[+]))
+(;B[ca]
+;W[gb])
+(;B[fa]
+;W[bb])
+(;B[gb]
+;W[bb])
+(;B[bb]
+;W[gb]))
+""".trimIndent(),
+)

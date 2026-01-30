@@ -18,6 +18,7 @@ internal object DefaultDarkColorScheme : THColorScheme {
     override val strokeTint: Color = Yellow
     override val strokeDisable: Color = IvoryT30
     override val strokeCritical: Color = Pink
+    override val strokeSuccess: Color = Green
     override val strokeDivider: Color = IvoryT75
     override val strokeCard: Color = Transparent
     override val strokeElevatedDivider: Color = Purple950

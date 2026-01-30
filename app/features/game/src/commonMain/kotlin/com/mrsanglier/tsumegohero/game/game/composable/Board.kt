@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.toSize
@@ -24,7 +25,7 @@ import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun Board(
+internal fun Board(
     boardSize: BoardSize = BoardSize.X19,
     modifier: Modifier = Modifier,
     style: BoardStyle = BoardStyle.Default,
@@ -35,8 +36,11 @@ fun Board(
 ) {
     val blackStoneImageBitmap = imageResource(style.blackStoneRes)
     val whiteStoneImageBitmap = imageResource(style.whiteStoneRes)
-    val scaleFactor = remember(boardSize, cropBoard) {
-        cropBoard.getScaleFactor(boardSize)
+    val scaleFactor = remember(boardSize.hashCode(), cropBoard.hashCode()) {
+        cropBoard.getScaleFactor(boardSize).also {
+            println("remember scaleFactor: $it")
+
+        }
     }
 
     Box(
@@ -53,9 +57,10 @@ fun Board(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
+                .pointerInput(scaleFactor, cropBoard) {
                     detectTapGestures { offset ->
                         // Reverse scaling to get click position in full board
+                        println("onTouch, scaleFactor: $scaleFactor")
                         val scaledOffset = unscaleOffset(
                             offset = offset,
                             scale = scaleFactor,
@@ -98,17 +103,12 @@ private fun CropBoard?.getScaleFactor(boardSize: BoardSize): Float {
     if (this == null) return 1f
     val originSize = boardSize.size
 
-    val (scaledWidth, scaledHeight) = when (this.corner) {
-        Corner.TopLeft -> cellRef.x to cellRef.y
-        Corner.TopRight -> originSize - cellRef.x to cellRef.y
-        Corner.BottomLeft -> cellRef.x to originSize - cellRef.y
-        Corner.BottomRight -> originSize - cellRef.x to originSize - cellRef.y
-    }
-    val scaledSize = maxOf(scaledWidth, scaledHeight)
+    val frameMaxLenght = maxOf(frame.xMax - frame.xMin, frame.yMax - frame.yMin)
+    val scaledSize = (frameMaxLenght + 2).coerceAtMost(originSize)
 
     if (scaledSize == originSize) return 1f
 
-    return (originSize - 1 + (2 * BORDER_SPACING_COEF)) / (scaledSize - 1 + BORDER_SPACING_COEF + 0.5f)
+    return (originSize - 1 + (2 * BORDER_SPACING_COEF)) / (scaledSize + BORDER_SPACING_COEF + 0.5f)
 }
 
 private fun Corner?.getScalingPivot(size: Size): Offset {

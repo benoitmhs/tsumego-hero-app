@@ -1,13 +1,28 @@
 package com.mrsanglier.tsumegohero.game.game
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_arrow_back
+import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
+import com.mrsanglier.tsumegohero.coreui.componants.button.THButton
+import com.mrsanglier.tsumegohero.coreui.componants.iconbutton.FOIconButton
 import com.mrsanglier.tsumegohero.coreui.componants.screen.THScreen
+import com.mrsanglier.tsumegohero.coreui.componants.text.THText
+import com.mrsanglier.tsumegohero.coreui.extension.toIconSpec
+import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
+import com.mrsanglier.tsumegohero.coreui.resources.THDrawable
+import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 import com.mrsanglier.tsumegohero.game.game.composable.Board
 import com.mrsanglier.tsumegohero.game.game.composable.Corner
 import com.mrsanglier.tsumegohero.game.model.Cell
@@ -23,6 +38,7 @@ fun GameRoute(
     GameScreen(
         uiState = uiState,
         onClickCell = viewModel::onClickCell,
+        onClickPrevious = viewModel::previous,
     )
 }
 
@@ -30,42 +46,66 @@ fun GameRoute(
 private fun GameScreen(
     uiState: GameViewModelState,
     onClickCell: (Cell) -> Unit,
+    onClickPrevious: () -> Unit,
 ) {
-    THScreen {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
+    THScreen { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding),
         ) {
-            Board(
-                whiteStones = uiState.whiteStones,
-                blackStones = uiState.blackStones,
-                cropBoard = uiState.cropBoard,
-                onClickCell = onClickCell,
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.CenterVertically),
+            ) {
+                THText(
+                    text = uiState.playerStone ?: "".toTextSpec(),
+                    style = THTheme.typography.title200
+                )
+
+                Board(
+                    whiteStones = uiState.whiteStones,
+                    blackStones = uiState.blackStones,
+                    cropBoard = uiState.cropBoard,
+                    onClickCell = onClickCell,
+                    modifier = Modifier
+                        .border(
+                            width = THTheme.stroke.regular,
+                            color = uiState.borderColor(),
+                            shape = THTheme.shape.roundSmall,
+                        )
+                )
+                THText(
+                    text = uiState.result ?: "".toTextSpec(),
+                    style = THTheme.typography.title200,
+                )
+            }
+
+            Row(
+                modifier = Modifier.padding(THTheme.spacing.large),
+                horizontalArrangement = Arrangement.spacedBy(THTheme.spacing.large),
+            ) {
+
+                THButton(
+                    icon = THDrawable.ic_arrow_back.toIconSpec(),
+                    style = ButtonStyle.Secondary,
+                    text = null,
+                    onClick = onClickPrevious,
+                )
+
+                uiState.resetButton.Content(
+                    modifier = Modifier
+                        .weight(1f)
+                )
+
+                uiState.nextButton.Content(
+                    modifier = Modifier.animateContentSize()
+                )
+            }
         }
     }
 }
-
-private val blackStonesSet: Set<Cell> = setOf(
-    Cell(0, 3),
-    Cell(1, 1),
-    Cell(1, 3),
-    Cell(1, 4),
-    Cell(2, 4),
-    Cell(3, 3),
-    Cell(3, 2),
-)
-
-private val whiteStonesSet: Set<Cell> = setOf(
-    Cell(0, 4),
-    Cell(1, 5),
-    Cell(2, 5),
-    Cell(2, 3),
-    Cell(3, 4),
-    Cell(4, 4),
-    Cell(4, 3),
-    Cell(4, 2),
-)
 
 private fun Set<Cell>.rotate(corner: Corner, boardSize: Int): Set<Cell> {
     return this.map {

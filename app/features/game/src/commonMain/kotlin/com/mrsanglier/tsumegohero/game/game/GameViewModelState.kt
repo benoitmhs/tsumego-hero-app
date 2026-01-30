@@ -1,6 +1,10 @@
 package com.mrsanglier.tsumegohero.game.game
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
+import com.mrsanglier.tsumegohero.coreui.componants.button.THButtonState
+import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
+import com.mrsanglier.tsumegohero.coreui.utils.ComposeProvider
 import com.mrsanglier.tsumegohero.game.game.composable.CropBoard
 import com.mrsanglier.tsumegohero.game.model.Cell
 
@@ -9,4 +13,10 @@ data class GameViewModelState(
     val whiteStones: Set<Cell> = emptySet(),
     val blackStones: Set<Cell> = emptySet(),
     val cropBoard: CropBoard? = null,
+    val playerStone: TextSpec? = null,
+    val result: TextSpec? = null,
+    val lastMove: Cell? = null,
+    val borderColor: ComposeProvider<Color> = { Color.Transparent },
+    val nextButton: THButtonState,
+    val resetButton: THButtonState,
 )

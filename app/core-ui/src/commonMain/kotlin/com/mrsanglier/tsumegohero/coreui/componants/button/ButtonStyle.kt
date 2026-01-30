@@ -47,6 +47,16 @@ sealed class ButtonStyle(
         loadingColor = THTheme.composed { colors.contentTint },
     )
 
+    data object Secondary : ButtonStyle(
+        contentColor = THTheme.composed { colors.content },
+        background = THTheme.composed { colors.surface3.asBackground() },
+        strokeColor = { Transparent },
+        disableContentColor = THTheme.composed { colors.contentDisable },
+        disableBackgroundColor = THTheme.composed { colors.surfaceDisable.asBackground() },
+        disableStrokeColor = { Transparent },
+        loadingColor = THTheme.composed { colors.content },
+    )
+
     data object Outlined : ButtonStyle(
         contentColor = THTheme.composed { colors.content },
         background = { null },

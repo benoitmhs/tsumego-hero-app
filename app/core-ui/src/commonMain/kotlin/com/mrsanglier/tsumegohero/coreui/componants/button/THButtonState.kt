@@ -9,7 +9,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
 
 @Immutable
 data class THButtonState(
-    val text: TextSpec,
+    val text: TextSpec?,
     val onClick: () -> Unit,
     val status: ButtonStatus = ButtonStatus.Enabled,
     val style: ButtonStyle = ButtonStyle.Primary,

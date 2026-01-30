@@ -18,6 +18,7 @@ interface THColorScheme {
     val strokeTint: Color
     val strokeDisable: Color
     val strokeCritical: Color
+    val strokeSuccess: Color
     val strokeDivider: Color
     val strokeCard: Color
     val strokeElevatedDivider: Color
@@ -59,6 +60,7 @@ interface THColorScheme {
         strokeTint: Color? = null,
         strokeDisable: Color? = null,
         strokeCritical: Color? = null,
+        strokeSuccess: Color? = null,
         strokeDivider: Color? = null,
         strokeCard: Color? = null,
         strokeElevatedDivider: Color? = null,
@@ -104,6 +106,7 @@ interface THColorScheme {
         override val strokeTint: Color = strokeTint ?: this@THColorScheme.strokeTint
         override val strokeDisable: Color = strokeDisable ?: this@THColorScheme.strokeDisable
         override val strokeCritical: Color = strokeCritical ?: this@THColorScheme.strokeCritical
+        override val strokeSuccess: Color = strokeCritical ?: this@THColorScheme.strokeSuccess
         override val strokeDivider: Color = strokeDivider ?: this@THColorScheme.strokeDivider
         override val strokeCard: Color = strokeCard ?: this@THColorScheme.strokeCard
         override val strokeElevatedDivider: Color = strokeElevatedDivider ?: this@THColorScheme.strokeElevatedDivider

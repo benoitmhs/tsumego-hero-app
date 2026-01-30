@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -66,9 +66,9 @@ class GameViewModel(
         }
     }
 
-    val uiState: StateFlow<GameViewModelState>
-        get() = gameFlow.map { game ->
-            if (game == null) return@map initialState()
+    val uiState: StateFlow<GameViewModelState> = gameFlow
+        .mapLatest { game ->
+            if (game == null) return@mapLatest initialState()
             val outcome = game.lastMove?.outcome ?: SgfNodeOutcome.NONE
             GameViewModelState(
                 whiteStones = game.board.whiteStones,
@@ -104,7 +104,12 @@ class GameViewModel(
                     } else ButtonStyle.Secondary,
                 ),
             )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), initialState())
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            initialState(),
+        )
 
     fun onClickCell(cell: Cell) {
         val game = gameFlow.value ?: return
@@ -136,8 +141,8 @@ class GameViewModel(
     }
 
     fun reset() {
-        gameFlow.update { game ->
-            game?.let(restartGameUseCase::invoke)
+        gameFlow.value?.let { game ->
+            gameFlow.value = restartGameUseCase(game)
         }
     }
 

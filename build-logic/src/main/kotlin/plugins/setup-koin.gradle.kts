@@ -3,7 +3,7 @@ import ext.koinCompiler
 import ext.koinCoreDependency
 import ext.koinCoroutines
 import ext.libs
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     id("com.google.devtools.ksp")
@@ -29,11 +29,11 @@ dependencies {
 }
 
 // WORKAROUND: ADD this dependsOn("kspCommonMainKotlinMetadata") instead of above dependencies
-tasks.withType<KotlinCompile<*>>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
+//tasks.withType<KotlinCompilationTask<*>>().configureEach {
+//    if (name != "kspCommonMainKotlinMetadata") {
+//        dependsOn("kspCommonMainKotlinMetadata")
+//    }
+//}
 
 afterEvaluate {
     tasks.filter {

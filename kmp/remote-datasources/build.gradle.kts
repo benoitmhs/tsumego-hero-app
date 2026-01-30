@@ -22,13 +22,6 @@ kotlin {
             // Serialization
             implementation(libs.kotlinx.serialization.json)
 
-            // Supabase
-            implementation(project.dependencies.platform(libs.supabase.bom))
-            implementation(libs.supabase.auth)
-            implementation(libs.supabase.postgrest)
-            implementation(libs.supabase.functions)
-            implementation(libs.supabase.realtime)
-
             // Project modules
             implementation(projects.kmp.core)
             implementation(projects.kmp.data)

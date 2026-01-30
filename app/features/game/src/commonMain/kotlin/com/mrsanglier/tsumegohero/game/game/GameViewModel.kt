@@ -73,6 +73,7 @@ class GameViewModel(
             GameViewModelState(
                 whiteStones = game.board.whiteStones,
                 blackStones = game.board.blackStones,
+                lastMove = game.lastMove?.move,
                 cropBoard = game.cropBoard,
                 playerStone = when (game.playerStone) {
                     Stone.BLACK -> "Black to play".toTextSpec() // TODO: loco

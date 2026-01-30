@@ -1,13 +1,17 @@
 package com.mrsanglier.tsumegohero.game.game.composable
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
 import com.mrsanglier.tsumegohero.game.model.BoardSize
 import com.mrsanglier.tsumegohero.game.model.Cell
+import com.mrsanglier.tsumegohero.game.model.Move
+import com.mrsanglier.tsumegohero.game.model.Stone
 
 internal fun DrawScope.drawBoard(
     boardSize: BoardSize,
@@ -16,6 +20,7 @@ internal fun DrawScope.drawBoard(
     whiteStones: Set<Cell>,
     blackStoneImageBitmap: ImageBitmap,
     whiteStoneImageBitmap: ImageBitmap,
+    lastMove: Move?,
 ) {
     val cellSpacing = minOf(size.width, size.height) / (boardSize.size - 1 + 2 * BORDER_SPACING_COEF)
     val boarderSpacing = cellSpacing * BORDER_SPACING_COEF
@@ -88,6 +93,20 @@ internal fun DrawScope.drawBoard(
             ) + startOffset).round(),
         )
     }
+
+    // Draw last stone marker
+    lastMove?.let { move ->
+        val circleColor = when (move.stone) {
+            Stone.BLACK -> Color.White
+            Stone.WHITE -> Color.Black
+        }
+        drawCircle(
+            color = circleColor,
+            radius = stoneSize / 2 * LAST_STONE_RATIO,
+            style = Stroke(width = LINE_STROKE),
+            center = Offset(move.gameMove.x * cellSpacing, move.gameMove.y * cellSpacing) + startOffset,
+        )
+    }
 }
 
 /** Size ratio of spacing border compare to cell spacing **/
@@ -95,3 +114,4 @@ internal const val BORDER_SPACING_COEF: Float = 1f
 
 private const val LINE_STROKE: Float = 2f
 private const val STONE_SIZE_RATIO: Float = 0.95f
+private const val LAST_STONE_RATIO: Float = 0.6f

@@ -7,6 +7,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
 import com.mrsanglier.tsumegohero.coreui.utils.ComposeProvider
 import com.mrsanglier.tsumegohero.game.model.CropBoard
 import com.mrsanglier.tsumegohero.game.model.Cell
+import com.mrsanglier.tsumegohero.game.model.Move
 
 @Immutable
 data class GameViewModelState(
@@ -15,7 +16,7 @@ data class GameViewModelState(
     val cropBoard: CropBoard? = null,
     val playerStone: TextSpec? = null,
     val result: TextSpec? = null,
-    val lastMove: Cell? = null,
+    val lastMove: Move? = null,
     val borderColor: ComposeProvider<Color> = { Color.Transparent },
     val nextButton: THButtonState,
     val resetButton: THButtonState,

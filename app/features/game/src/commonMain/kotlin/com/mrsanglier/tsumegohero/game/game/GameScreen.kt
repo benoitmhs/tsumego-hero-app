@@ -68,6 +68,7 @@ private fun GameScreen(
                     blackStones = uiState.blackStones,
                     cropBoard = uiState.cropBoard,
                     onClickCell = onClickCell,
+                    lastMove = uiState.lastMove,
                     modifier = Modifier
                         .border(
                             width = THTheme.stroke.regular,

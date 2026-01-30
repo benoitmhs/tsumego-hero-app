@@ -19,6 +19,7 @@ import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
 import com.mrsanglier.tsumegohero.game.model.BoardSize
 import com.mrsanglier.tsumegohero.game.model.Cell
 import com.mrsanglier.tsumegohero.game.model.CropBoard
+import com.mrsanglier.tsumegohero.game.model.Move
 import com.mrsanglier.tsumegohero.game.utils.convertOffsetToCell
 import com.mrsanglier.tsumegohero.game.utils.getScaleFactor
 import com.mrsanglier.tsumegohero.game.utils.getScalingPivot
@@ -33,6 +34,7 @@ internal fun Board(
     cropBoard: CropBoard? = null,
     blackStones: Set<Cell> = emptySet(),
     whiteStones: Set<Cell> = emptySet(),
+    lastMove: Move? = null,
     onClickCell: (Cell) -> Unit = {},
 ) {
     val blackStoneImageBitmap = imageResource(style.blackStoneRes)
@@ -79,6 +81,7 @@ internal fun Board(
                     whiteStones = whiteStones,
                     blackStoneImageBitmap = blackStoneImageBitmap,
                     whiteStoneImageBitmap = whiteStoneImageBitmap,
+                    lastMove = lastMove,
                 )
             }
         }

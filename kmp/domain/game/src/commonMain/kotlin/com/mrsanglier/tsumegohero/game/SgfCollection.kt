@@ -1,4 +1,4 @@
-package com.mrsanglier.tsumegohero.game.game
+package com.mrsanglier.tsumegohero.game
 
 internal val sgfCollection: Array<String> = arrayOf(
     """

@@ -1,21 +1,30 @@
-package com.mrsanglier.tsumegohero.game.usecase
+package com.mrsanglier.tsumegohero.game.delegate
 
 import com.mrsanglier.tsumegohero.game.model.Board
 import com.mrsanglier.tsumegohero.game.model.Cell
-import com.mrsanglier.tsumegohero.game.model.Stone
+import com.mrsanglier.tsumegohero.game.model.Move
 import com.mrsanglier.tsumegohero.game.model.Stone.Companion.getOpponent
 import com.mrsanglier.tsumegohero.game.utils.zobristHash
 
-class PlayMoveUseCase() {
-    /**
-     * @return: Board updated, null if illegal move (no change applied)
-     */
-    operator fun invoke(
+interface PlayMoveDelegate {
+
+    /** @return: Board updated, null if illegal move (no change applied) */
+    fun playMoveOnBoard(
         previousBoard: Board,
-        cell: Cell,
-        stone: Stone,
+        move: Move,
+    ): Board?
+}
+
+class PlayMoveDelegateImpl() : PlayMoveDelegate {
+
+    override fun playMoveOnBoard(
+        previousBoard: Board,
+        move: Move,
     ): Board? {
+        val cell = move.gameMove
         val (x, y) = cell
+        val stone = move.stone
+
         previousBoard.copy().apply {
             if (getStoneAt(cell) != null) return null
 

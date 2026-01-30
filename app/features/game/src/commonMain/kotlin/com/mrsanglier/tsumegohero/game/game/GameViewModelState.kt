@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 import com.mrsanglier.tsumegohero.coreui.componants.button.THButtonState
 import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
 import com.mrsanglier.tsumegohero.coreui.utils.ComposeProvider
-import com.mrsanglier.tsumegohero.game.game.composable.CropBoard
+import com.mrsanglier.tsumegohero.game.model.CropBoard
 import com.mrsanglier.tsumegohero.game.model.Cell
 
 @Immutable

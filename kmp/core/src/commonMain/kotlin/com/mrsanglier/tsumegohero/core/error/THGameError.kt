@@ -7,7 +7,9 @@ class THGameError(
     override val code: Code,
 ) : THError(message, cause, code) {
     enum class Code : THErrorCode {
+        InvalidMove,
         SgfFormatNotSupported,
+        WrongPlayerTurn,
     }
 }
 

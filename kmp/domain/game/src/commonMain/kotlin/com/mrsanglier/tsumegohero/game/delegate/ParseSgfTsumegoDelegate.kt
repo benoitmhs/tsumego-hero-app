@@ -1,8 +1,7 @@
-package com.mrsanglier.tsumegohero.game.usecase
+package com.mrsanglier.tsumegohero.game.delegate
 
 import com.mrsanglier.tsumegohero.core.error.THGameError
 import com.mrsanglier.tsumegohero.core.error.toError
-import com.mrsanglier.tsumegohero.core.result.THResult
 import com.mrsanglier.tsumegohero.game.model.Board
 import com.mrsanglier.tsumegohero.game.model.BoardSize
 import com.mrsanglier.tsumegohero.game.model.Stone
@@ -11,8 +10,12 @@ import com.mrsanglier.tsumegohero.game.utils.SgfParser.parseInitialStones
 import com.mrsanglier.tsumegohero.game.utils.SgfParser.parseTree
 import com.mrsanglier.tsumegohero.game.utils.SgfParser.tokenize
 
-class LoadTsumegoUseCase {
-    operator fun invoke(sgf: String): THResult<Tsumego> = THResult.catchResult {
+interface ParseSgfTsumegoDelegate {
+    fun parseSgfTsumego(sgf: String): Tsumego
+}
+
+class ParseSgfTsumegoDelegateImpl() : ParseSgfTsumegoDelegate {
+    override fun parseSgfTsumego(sgf: String): Tsumego {
         val cleaned = sgf.replace(Regex("\\s"), "")
 
         val size = Regex("SZ\\[(\\d+)]")
@@ -32,11 +35,9 @@ class LoadTsumegoUseCase {
         val tokens = tokenize(cleaned).drop(2)
         val root = parseTree(tokens)
 
-        return@catchResult Tsumego(
+        return Tsumego(
             initialBoard = board,
-            board = board,
             root = root,
         )
     }
-
 }

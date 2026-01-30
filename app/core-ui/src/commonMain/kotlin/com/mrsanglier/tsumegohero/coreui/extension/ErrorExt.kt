@@ -28,6 +28,8 @@ fun THError.messageText(): TextSpec? = when (this.code) {
     THRemoteError.Code.InvalidShareCode, // TODO: error strings
     THRemoteError.Code.NotFound, // TODO: error strings
     THRemoteError.Code.ServerError, // TODO: error strings
+    THGameError.Code.InvalidMove, // TODO: error strings
+    THGameError.Code.WrongPlayerTurn, // TODO: error strings
     THGameError.Code.SgfFormatNotSupported, // TODO: error strings
         -> THString.common_error_unknown
 

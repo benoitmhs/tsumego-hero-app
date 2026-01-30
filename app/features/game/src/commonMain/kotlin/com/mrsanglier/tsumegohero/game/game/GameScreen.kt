@@ -16,7 +16,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mrsanglier.tsumegohero.app.coreui.resources.ic_arrow_back
 import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
 import com.mrsanglier.tsumegohero.coreui.componants.button.THButton
-import com.mrsanglier.tsumegohero.coreui.componants.iconbutton.FOIconButton
 import com.mrsanglier.tsumegohero.coreui.componants.screen.THScreen
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
 import com.mrsanglier.tsumegohero.coreui.extension.toIconSpec
@@ -24,7 +23,7 @@ import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
 import com.mrsanglier.tsumegohero.coreui.resources.THDrawable
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 import com.mrsanglier.tsumegohero.game.game.composable.Board
-import com.mrsanglier.tsumegohero.game.game.composable.Corner
+import com.mrsanglier.tsumegohero.game.model.Corner
 import com.mrsanglier.tsumegohero.game.model.Cell
 import org.koin.compose.viewmodel.koinViewModel
 

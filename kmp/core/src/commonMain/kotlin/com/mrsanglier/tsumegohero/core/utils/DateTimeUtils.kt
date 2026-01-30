@@ -1,10 +1,10 @@
 package com.mrsanglier.tsumegohero.core.utils
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 fun now(): Instant = Clock.System.now()
 

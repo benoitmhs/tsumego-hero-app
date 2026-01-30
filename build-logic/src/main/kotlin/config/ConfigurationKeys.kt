@@ -18,7 +18,7 @@ internal object ConfigurationKeys {
 
     val sdkConfiguration = SdkConfiguration(
         minSdk = 24,
-        targetSdk = 35,
-        compileSdk = 35,
+        targetSdk = 36,
+        compileSdk = 36,
     )
 }

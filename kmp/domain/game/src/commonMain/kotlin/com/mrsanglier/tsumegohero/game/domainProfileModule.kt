@@ -1,5 +1,6 @@
 package com.mrsanglier.tsumegohero.game
 
+import com.mrsanglier.tsumegohero.game.delegate.DeriveTsumegoDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.GetCropBoardDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.ParseSgfTsumegoDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.PlayMoveDelegateImpl
@@ -25,6 +26,7 @@ val domainGameModule: Module = module {
     singleOf(::StartReviewUseCase)
 
     // Delegate
+    singleOf(::DeriveTsumegoDelegateImpl)
     singleOf(::GetCropBoardDelegateImpl)
     singleOf(::ParseSgfTsumegoDelegateImpl)
     singleOf(::PlayMoveDelegateImpl)

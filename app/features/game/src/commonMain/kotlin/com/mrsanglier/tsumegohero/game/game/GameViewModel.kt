@@ -19,6 +19,7 @@ import com.mrsanglier.tsumegohero.game.model.Cell
 import com.mrsanglier.tsumegohero.game.model.Game
 import com.mrsanglier.tsumegohero.game.model.SgfNodeOutcome
 import com.mrsanglier.tsumegohero.game.model.Stone
+import com.mrsanglier.tsumegohero.game.usecase.PlayFreeMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayOpponentMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayPlayerMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.RestartGameUseCase
@@ -37,6 +38,7 @@ import kotlin.time.Duration.Companion.milliseconds
 private val OPPONENT_TURN_DELAY: Duration = 300.milliseconds
 
 class GameViewModel(
+    private val playFreeMoveUseCase: PlayFreeMoveUseCase,
     private val playPlayerMoveUseCase: PlayPlayerMoveUseCase,
     private val playOpponentMoveUseCase: PlayOpponentMoveUseCase,
     private val startGameUseCase: StartGameUseCase,
@@ -114,6 +116,21 @@ class GameViewModel(
 
     fun onClickCell(cell: Cell) {
         val game = gameFlow.value ?: return
+
+        if (game.outcome == SgfNodeOutcome.NONE) {
+            playPlayerMove(cell = cell, game = game)
+        } else {
+            playFreeMove(cell = cell, game = game)
+        }
+    }
+
+    private fun playFreeMove(cell: Cell, game: Game) {
+        playFreeMoveUseCase(game = game, cell = cell)?.let { board ->
+            gameFlow.value = board
+        }
+    }
+
+    private fun playPlayerMove(cell: Cell, game: Game) {
         if (!lockTouch.value) {
             lockTouch.value = true
 

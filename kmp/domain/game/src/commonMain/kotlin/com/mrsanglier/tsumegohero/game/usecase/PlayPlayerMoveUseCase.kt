@@ -31,7 +31,8 @@ class PlayPlayerMoveUseCase(
         ) ?: throw THGameError.Code.InvalidMove.toError()
 
         // Check tsumego outcome
-        val possibleNodes = (game.lastMove?.children ?: game.tsumego.root.children)
+        val possibleNodes = game.lastMove?.children
+            ?: game.tsumego.root.children.map { it.clone() }
         val currentNode = possibleNodes.firstOrNull { (_, move, _) ->
             move == playerMove
         } ?: MoveNode(

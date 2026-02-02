@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
+import com.mrsanglier.tsumegohero.coreui.theme.color.DarkGreen
 import com.mrsanglier.tsumegohero.game.game.uimodel.BoardStyle
 import com.mrsanglier.tsumegohero.game.model.BoardSize
 import com.mrsanglier.tsumegohero.game.model.Cell
@@ -21,6 +22,8 @@ internal fun DrawScope.drawBoard(
     blackStoneImageBitmap: ImageBitmap,
     whiteStoneImageBitmap: ImageBitmap,
     lastMove: Move?,
+    goodMoves: Set<Cell>?,
+    badMoves: Set<Cell>?,
 ) {
     val cellSpacing = minOf(size.width, size.height) / (boardSize.size - 1 + 2 * BORDER_SPACING_COEF)
     val boarderSpacing = cellSpacing * BORDER_SPACING_COEF
@@ -68,29 +71,35 @@ internal fun DrawScope.drawBoard(
     // Draw Stones
     val stoneSize = cellSpacing * STONE_SIZE_RATIO
     for (stone in blackStones) {
-        drawImage(
-            image = blackStoneImageBitmap,
-            dstSize = IntSize(
-                width = stoneSize.toInt(),
-                height = stoneSize.toInt(),
-            ),
-            dstOffset = (Offset(
-                x = (stone.x * cellSpacing) - stoneSize / 2,
-                y = (stone.y * cellSpacing) - stoneSize / 2,
-            ) + startOffset).round(),
+        drawStone(
+            imageBitmap = blackStoneImageBitmap,
+            cell = stone,
+            cellSpacing = cellSpacing,
+            startOffset = startOffset,
         )
     }
     for (stone in whiteStones) {
-        drawImage(
-            image = whiteStoneImageBitmap,
-            dstSize = IntSize(
-                width = stoneSize.toInt(),
-                height = stoneSize.toInt(),
-            ),
-            dstOffset = (Offset(
-                x = (stone.x * cellSpacing) - stoneSize / 2,
-                y = (stone.y * cellSpacing) - stoneSize / 2,
-            ) + startOffset).round(),
+        drawStone(
+            imageBitmap = whiteStoneImageBitmap,
+            cell = stone,
+            cellSpacing = cellSpacing,
+            startOffset = startOffset,
+        )
+    }
+
+    // Draw review marker
+    goodMoves?.forEach { (x, y) ->
+        drawCircle(
+            center = Offset(x = x * cellSpacing, y = y * cellSpacing) + startOffset,
+            radius = cellSpacing / 2 * REVIEW_MARKER_RATIO,
+            color = DarkGreen.copy(alpha = REVIEW_MARKER_ALPHA),
+        )
+    }
+    badMoves?.forEach { (x, y) ->
+        drawCircle(
+            center = Offset(x = x * cellSpacing, y = y * cellSpacing) + startOffset,
+            radius = cellSpacing / 2 * REVIEW_MARKER_RATIO,
+            color = Color.Red.copy(alpha = REVIEW_MARKER_ALPHA),
         )
     }
 
@@ -109,9 +118,43 @@ internal fun DrawScope.drawBoard(
     }
 }
 
+private fun DrawScope.drawStone(
+    imageBitmap: ImageBitmap,
+    cell: Cell,
+    cellSpacing: Float,
+    startOffset: Offset,
+) {
+    val stoneSize = cellSpacing * STONE_SIZE_RATIO
+    // Shadow
+    drawCircle(
+        color = Color.Black.copy(alpha = 0.2f),
+        radius = stoneSize / 2 * STONE_SHADOW_RATIO,
+        center = Offset(
+            x = cell.x * cellSpacing,
+            y = cell.y * cellSpacing,
+        ) + startOffset + Offset(1f, 1f),
+    )
+
+    // Stone
+    drawImage(
+        image = imageBitmap,
+        dstSize = IntSize(
+            width = stoneSize.toInt(),
+            height = stoneSize.toInt(),
+        ),
+        dstOffset = (Offset(
+            x = (cell.x * cellSpacing) - stoneSize / 2,
+            y = (cell.y * cellSpacing) - stoneSize / 2,
+        ) + startOffset).round(),
+    )
+}
+
 /** Size ratio of spacing border compare to cell spacing **/
 internal const val BORDER_SPACING_COEF: Float = 1f
 
 private const val LINE_STROKE: Float = 2f
 private const val STONE_SIZE_RATIO: Float = 0.95f
 private const val LAST_STONE_RATIO: Float = 0.6f
+private const val STONE_SHADOW_RATIO: Float = 1.02f
+private const val REVIEW_MARKER_RATIO: Float = 0.3f
+private const val REVIEW_MARKER_ALPHA: Float = 0.6f

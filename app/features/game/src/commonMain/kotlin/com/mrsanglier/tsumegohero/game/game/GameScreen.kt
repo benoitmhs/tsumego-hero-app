@@ -56,12 +56,17 @@ private fun GameScreen(
                     .fillMaxWidth()
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(THTheme.spacing.huge),
             ) {
-                THText(
-                    text = uiState.playerStone ?: "".toTextSpec(),
-                    style = THTheme.typography.title200
-                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Bottom,
+                ) {
+                    THText(
+                        text = uiState.playerStone ?: "".toTextSpec(),
+                        style = THTheme.typography.title200
+                    )
+                }
 
                 Board(
                     whiteStones = uiState.whiteStones,
@@ -69,6 +74,8 @@ private fun GameScreen(
                     cropBoard = uiState.cropBoard,
                     onClickCell = onClickCell,
                     lastMove = uiState.lastMove,
+                    goodMoves = uiState.goodMoves,
+                    badMoves = uiState.badMoves,
                     modifier = Modifier
                         .border(
                             width = THTheme.stroke.regular,
@@ -76,10 +83,16 @@ private fun GameScreen(
                             shape = THTheme.shape.roundSmall,
                         )
                 )
-                THText(
-                    text = uiState.result ?: "".toTextSpec(),
-                    style = THTheme.typography.title200,
-                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(THTheme.spacing.xlarge),
+                ) {
+                    THText(
+                        text = uiState.result ?: "".toTextSpec(),
+                        style = THTheme.typography.title200,
+                    )
+                    uiState.reviewButton?.Content()
+                }
             }
 
             Row(

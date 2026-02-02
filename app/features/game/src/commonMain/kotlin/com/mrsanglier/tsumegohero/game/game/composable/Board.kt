@@ -34,6 +34,8 @@ internal fun Board(
     cropBoard: CropBoard? = null,
     blackStones: Set<Cell> = emptySet(),
     whiteStones: Set<Cell> = emptySet(),
+    goodMoves: Set<Cell>? = null,
+    badMoves: Set<Cell>? = null,
     lastMove: Move? = null,
     onClickCell: (Cell) -> Unit = {},
 ) {
@@ -82,6 +84,8 @@ internal fun Board(
                     blackStoneImageBitmap = blackStoneImageBitmap,
                     whiteStoneImageBitmap = whiteStoneImageBitmap,
                     lastMove = lastMove,
+                    goodMoves = goodMoves,
+                    badMoves = badMoves,
                 )
             }
         }

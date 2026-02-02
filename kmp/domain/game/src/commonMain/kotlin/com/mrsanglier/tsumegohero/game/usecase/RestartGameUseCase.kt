@@ -9,6 +9,7 @@ class RestartGameUseCase {
         return game.copy(
             board = game.tsumego.initialBoard,
             moveStack = emptyList(),
+            reviewRoot = null,
         )
     }
 }

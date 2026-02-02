@@ -22,8 +22,10 @@ import com.mrsanglier.tsumegohero.game.model.Stone
 import com.mrsanglier.tsumegohero.game.usecase.PlayFreeMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayOpponentMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayPlayerMoveUseCase
+import com.mrsanglier.tsumegohero.game.usecase.PlayReviewMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.RestartGameUseCase
 import com.mrsanglier.tsumegohero.game.usecase.StartGameUseCase
+import com.mrsanglier.tsumegohero.game.usecase.StartReviewUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,7 +43,9 @@ class GameViewModel(
     private val playFreeMoveUseCase: PlayFreeMoveUseCase,
     private val playPlayerMoveUseCase: PlayPlayerMoveUseCase,
     private val playOpponentMoveUseCase: PlayOpponentMoveUseCase,
+    private val playReviewMoveUseCase: PlayReviewMoveUseCase,
     private val startGameUseCase: StartGameUseCase,
+    private val startReviewUseCase: StartReviewUseCase,
     private val restartGameUseCase: RestartGameUseCase,
     private val snackbarManager: SnackbarManager,
 ) : ViewModel() {
@@ -60,6 +64,7 @@ class GameViewModel(
 
         viewModelScope.launch {
             gameFlow.collect { data ->
+                if (data?.isReview == true) return@collect
                 lockTouch.emit(data?.isOpponentTurn == true)
                 if (data?.isOpponentTurn == true) {
                     playOpponentTurn(data)
@@ -71,7 +76,13 @@ class GameViewModel(
     val uiState: StateFlow<GameViewModelState> = gameFlow
         .mapLatest { game ->
             if (game == null) return@mapLatest initialState()
-            val outcome = game.lastMove?.outcome ?: SgfNodeOutcome.NONE
+
+            val outcome = game.lastMove?.outcome?.takeIf { !game.isReview }
+                ?: SgfNodeOutcome.NONE
+            val (goodMoves, badMoves) = game.reviewNextMove?.let { reviewMoves ->
+                reviewMoves.partition { it.outcome == SgfNodeOutcome.SUCCESS }
+            } ?: (null to null)
+
             GameViewModelState(
                 whiteStones = game.board.whiteStones,
                 blackStones = game.board.blackStones,
@@ -83,8 +94,8 @@ class GameViewModel(
                 },
                 result = when (outcome) {
                     SgfNodeOutcome.NONE -> null
-                    SgfNodeOutcome.SUCCESS -> "✅ Correct".toTextSpec()
-                    SgfNodeOutcome.FAILURE -> "❌ Incorrect".toTextSpec()
+                    SgfNodeOutcome.SUCCESS -> "✅ Correct".toTextSpec() // TODO: loco
+                    SgfNodeOutcome.FAILURE -> "❌ Incorrect".toTextSpec() // TODO: loco
                 },
                 borderColor = THTheme.composed {
                     when (outcome) {
@@ -98,14 +109,18 @@ class GameViewModel(
                         ButtonStyle.Primary
                     } else ButtonStyle.Secondary,
                     text = if (outcome == SgfNodeOutcome.SUCCESS) {
-                        "Next".toTextSpec()
+                        "Next".toTextSpec() // TODO: loco
                     } else null,
                 ),
                 resetButton = defaultRestartButton.copy(
                     style = if (game.lastMove?.outcome == SgfNodeOutcome.FAILURE) {
                         ButtonStyle.Primary
                     } else ButtonStyle.Secondary,
+                    text = "Restart".toTextSpec(), // TODO: loco
                 ),
+                reviewButton = defaultReviewButton.takeIf { !game.isReview && outcome != SgfNodeOutcome.NONE },
+                goodMoves = goodMoves?.map { it.move.gameMove }?.toSet(),
+                badMoves = badMoves?.map { it.move.gameMove }?.toSet(),
             )
         }
         .stateIn(
@@ -117,16 +132,16 @@ class GameViewModel(
     fun onClickCell(cell: Cell) {
         val game = gameFlow.value ?: return
 
-        if (game.outcome == SgfNodeOutcome.NONE) {
-            playPlayerMove(cell = cell, game = game)
-        } else {
-            playFreeMove(cell = cell, game = game)
+        when {
+            game.isReview -> playReviewMove(cell = cell, game = game)
+            game.outcome == SgfNodeOutcome.NONE -> playPlayerMove(cell = cell, game = game)
+            else -> playFreeMove(cell = cell, game = game)
         }
     }
 
     private fun playFreeMove(cell: Cell, game: Game) {
-        playFreeMoveUseCase(game = game, cell = cell)?.let { board ->
-            gameFlow.value = board
+        playFreeMoveUseCase(game = game, cell = cell)?.let { gameUpdated ->
+            gameFlow.value = gameUpdated
         }
     }
 
@@ -150,7 +165,13 @@ class GameViewModel(
         }
     }
 
-    fun next() {
+    private fun playReviewMove(cell: Cell, game: Game) {
+        playReviewMoveUseCase(cell = cell, game = game)?.let { gameUpdated ->
+            gameFlow.value = gameUpdated
+        }
+    }
+
+    private fun next() {
         indexCollection.update { it + 1 }
     }
 
@@ -158,9 +179,15 @@ class GameViewModel(
         indexCollection.update { it - 1 }
     }
 
-    fun reset() {
+    private fun reset() {
         gameFlow.value?.let { game ->
             gameFlow.value = restartGameUseCase(game)
+        }
+    }
+
+    private fun startReview() {
+        gameFlow.value?.let { game ->
+            gameFlow.value = startReviewUseCase(game = game)
         }
     }
 
@@ -205,5 +232,12 @@ class GameViewModel(
             trailingIcon = THDrawable.ic_arrow_forward.toIconSpec(),
             style = ButtonStyle.Secondary,
             onClick = ::next,
+        )
+
+    private val defaultReviewButton: THButtonState
+        get() = THButtonState(
+            text = "📖 Review".toTextSpec(), // TODO: loco
+            style = ButtonStyle.Secondary,
+            onClick = ::startReview,
         )
 }

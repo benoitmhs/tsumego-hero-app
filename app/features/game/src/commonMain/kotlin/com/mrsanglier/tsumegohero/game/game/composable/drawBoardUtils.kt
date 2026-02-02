@@ -71,29 +71,19 @@ internal fun DrawScope.drawBoard(
     // Draw Stones
     val stoneSize = cellSpacing * STONE_SIZE_RATIO
     for (stone in blackStones) {
-        drawImage(
-            image = blackStoneImageBitmap,
-            dstSize = IntSize(
-                width = stoneSize.toInt(),
-                height = stoneSize.toInt(),
-            ),
-            dstOffset = (Offset(
-                x = (stone.x * cellSpacing) - stoneSize / 2,
-                y = (stone.y * cellSpacing) - stoneSize / 2,
-            ) + startOffset).round(),
+        drawStone(
+            imageBitmap = blackStoneImageBitmap,
+            cell = stone,
+            cellSpacing = cellSpacing,
+            startOffset = startOffset,
         )
     }
     for (stone in whiteStones) {
-        drawImage(
-            image = whiteStoneImageBitmap,
-            dstSize = IntSize(
-                width = stoneSize.toInt(),
-                height = stoneSize.toInt(),
-            ),
-            dstOffset = (Offset(
-                x = (stone.x * cellSpacing) - stoneSize / 2,
-                y = (stone.y * cellSpacing) - stoneSize / 2,
-            ) + startOffset).round(),
+        drawStone(
+            imageBitmap = whiteStoneImageBitmap,
+            cell = stone,
+            cellSpacing = cellSpacing,
+            startOffset = startOffset,
         )
     }
 
@@ -128,11 +118,43 @@ internal fun DrawScope.drawBoard(
     }
 }
 
+private fun DrawScope.drawStone(
+    imageBitmap: ImageBitmap,
+    cell: Cell,
+    cellSpacing: Float,
+    startOffset: Offset,
+) {
+    val stoneSize = cellSpacing * STONE_SIZE_RATIO
+    // Shadow
+    drawCircle(
+        color = Color.Black.copy(alpha = 0.2f),
+        radius = stoneSize / 2 * STONE_SHADOW_RATIO,
+        center = Offset(
+            x = cell.x * cellSpacing,
+            y = cell.y * cellSpacing,
+        ) + startOffset + Offset(1f, 1f),
+    )
+
+    // Stone
+    drawImage(
+        image = imageBitmap,
+        dstSize = IntSize(
+            width = stoneSize.toInt(),
+            height = stoneSize.toInt(),
+        ),
+        dstOffset = (Offset(
+            x = (cell.x * cellSpacing) - stoneSize / 2,
+            y = (cell.y * cellSpacing) - stoneSize / 2,
+        ) + startOffset).round(),
+    )
+}
+
 /** Size ratio of spacing border compare to cell spacing **/
 internal const val BORDER_SPACING_COEF: Float = 1f
 
 private const val LINE_STROKE: Float = 2f
 private const val STONE_SIZE_RATIO: Float = 0.95f
 private const val LAST_STONE_RATIO: Float = 0.6f
+private const val STONE_SHADOW_RATIO: Float = 1.02f
 private const val REVIEW_MARKER_RATIO: Float = 0.3f
 private const val REVIEW_MARKER_ALPHA: Float = 0.6f

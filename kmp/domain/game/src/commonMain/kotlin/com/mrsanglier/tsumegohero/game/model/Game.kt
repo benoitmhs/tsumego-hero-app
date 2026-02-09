@@ -1,6 +1,9 @@
 package com.mrsanglier.tsumegohero.game.model
 
+import com.mrsanglier.tsumegohero.data.model.game.RawTsumego
+
 data class Game(
+    val sgf: RawTsumego,
     val board: Board,
     val moveStack: List<MoveNode> = emptyList(),
     val tsumego: Tsumego,

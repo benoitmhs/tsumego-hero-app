@@ -43,6 +43,7 @@ include(":kmp:remote-datasources")
 include(":kmp:domain:appsettings")
 include(":kmp:domain:authentication")
 include(":kmp:domain:common")
+include(":kmp:domain:dashboard-game")
 include(":kmp:domain:profile")
 include(":kmp:domain:game")
 

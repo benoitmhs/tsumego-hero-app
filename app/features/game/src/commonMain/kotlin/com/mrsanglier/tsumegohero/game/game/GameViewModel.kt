@@ -1,8 +1,10 @@
 package com.mrsanglier.tsumegohero.game.game
 
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.mrsanglier.tsumegohero.app.coreui.resources.ic_arrow_forward
 import com.mrsanglier.tsumegohero.core.error.THGameError
 import com.mrsanglier.tsumegohero.core.extension.handleResult
@@ -19,6 +21,7 @@ import com.mrsanglier.tsumegohero.game.model.Cell
 import com.mrsanglier.tsumegohero.game.model.Game
 import com.mrsanglier.tsumegohero.game.model.SgfNodeOutcome
 import com.mrsanglier.tsumegohero.game.model.Stone
+import com.mrsanglier.tsumegohero.game.usecase.GetNextTsumegoIdUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayFreeMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayOpponentMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayPlayerMoveUseCase
@@ -32,7 +35,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -48,18 +50,19 @@ class GameViewModel(
     private val startReviewUseCase: StartReviewUseCase,
     private val restartGameUseCase: RestartGameUseCase,
     private val snackbarManager: SnackbarManager,
+    private val getNextTsumegoIdUseCase: GetNextTsumegoIdUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val args: GameDestination = savedStateHandle.toRoute()
 
     private val gameFlow = MutableStateFlow<Game?>(null)
     private val lockTouch = MutableStateFlow(false)
-    private val indexCollection = MutableStateFlow(2)
 
     init {
 
         viewModelScope.launch {
-            indexCollection.collect { i ->
-                loadTsumego(i)
-            }
+            loadTsumego(args.tsumegoId)
         }
 
         viewModelScope.launch {
@@ -84,6 +87,7 @@ class GameViewModel(
             } ?: (null to null)
 
             GameViewModelState(
+                title = game.sgf.name.toTextSpec(),
                 whiteStones = game.board.whiteStones,
                 blackStones = game.board.blackStones,
                 lastMove = game.lastMove?.move,
@@ -172,11 +176,27 @@ class GameViewModel(
     }
 
     private fun next() {
-        indexCollection.update { it + 1 }
+        loadNextTsumego(isPrevious = false)
     }
 
     fun previous() {
-        indexCollection.update { it - 1 }
+        loadNextTsumego(isPrevious = true)
+    }
+
+    private fun loadNextTsumego(isPrevious: Boolean) {
+        gameFlow.value?.sgf?.id?.let { tsumegoId ->
+            viewModelScope.launch {
+                getNextTsumegoIdUseCase(
+                    currentTsumegoId = tsumegoId,
+                    isPrevious = isPrevious,
+                ).handleResult(
+                    onSuccess = { tsumegoId ->
+                        loadTsumego(tsumegoId)
+                    },
+                    onFailure = snackbarManager::showError,
+                )
+            }
+        }
     }
 
     private fun reset() {
@@ -197,8 +217,8 @@ class GameViewModel(
         resetButton = defaultRestartButton,
     )
 
-    private fun loadTsumego(index: Int) {
-        val result = startGameUseCase(index)
+    private suspend fun loadTsumego(tsumegoId: String) {
+        val result = startGameUseCase(tsumegoId)
         result.data?.let { data ->
             gameFlow.value = data
         }

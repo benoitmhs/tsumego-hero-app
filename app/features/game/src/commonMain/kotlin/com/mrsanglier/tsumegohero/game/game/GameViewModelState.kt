@@ -11,6 +11,7 @@ import com.mrsanglier.tsumegohero.game.model.Move
 
 @Immutable
 data class GameViewModelState(
+    val title: TextSpec? = null,
     val whiteStones: Set<Cell> = emptySet(),
     val blackStones: Set<Cell> = emptySet(),
     val cropBoard: CropBoard? = null,

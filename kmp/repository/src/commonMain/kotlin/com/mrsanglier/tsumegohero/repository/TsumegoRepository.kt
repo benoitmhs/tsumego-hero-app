@@ -1,0 +1,23 @@
+package com.mrsanglier.tsumegohero.repository
+
+import com.mrsanglier.tsumegohero.localdatasources.datasource.LocalTsumegoDatasource
+import com.mrsanglier.tsumegohero.data.model.game.RawTsumego
+import kotlinx.coroutines.flow.Flow
+
+class TsumegoRepository(
+    private val localTsumegoDatasource: LocalTsumegoDatasource,
+) {
+    suspend fun upsert(tsumegos: List<RawTsumego>) {
+        localTsumegoDatasource.upsert(tsumegos)
+    }
+
+    fun observeAllGames(): Flow<List<RawTsumego>> =
+        localTsumegoDatasource.observeAllGames()
+
+    fun observeGame(id: String): Flow<RawTsumego> =
+        localTsumegoDatasource.observeGame(id)
+
+    suspend fun clean() {
+        localTsumegoDatasource.clean()
+    }
+}

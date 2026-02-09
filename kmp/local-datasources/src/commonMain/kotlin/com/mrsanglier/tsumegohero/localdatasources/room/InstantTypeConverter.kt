@@ -1,7 +1,7 @@
 package com.mrsanglier.tsumegohero.localdatasources.room
 
 import androidx.room.TypeConverter
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 internal class InstantTypeConverter {
 

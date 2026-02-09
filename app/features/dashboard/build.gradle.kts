@@ -24,6 +24,9 @@ kotlin {
             // Constraint layout
             implementation(libs.constraintlayout)
 
+            // File picking
+            implementation(libs.filekit.dialogs.compose)
+
             // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -51,6 +54,7 @@ kotlin {
             implementation(projects.kmp.core)
             implementation(projects.kmp.data)
             implementation(projects.kmp.domain.authentication)
+            implementation(projects.kmp.domain.dashboardGame)
         }
     }
 }

@@ -22,7 +22,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.icon.IconSize
 import com.mrsanglier.tsumegohero.coreui.componants.icon.IconSpec
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
 import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
-import com.mrsanglier.tsumegohero.coreui.extension.foClickable
+import com.mrsanglier.tsumegohero.coreui.extension.thClickable
 import com.mrsanglier.tsumegohero.coreui.extension.surface
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 
@@ -52,7 +52,7 @@ fun THActionButton(
                 borderColor = strokeColor,
                 borderWidth = THTheme.stroke.regular,
             )
-            .foClickable(
+            .thClickable(
                 onClick = {
                     focusManager.clearFocus()
                     onClick()

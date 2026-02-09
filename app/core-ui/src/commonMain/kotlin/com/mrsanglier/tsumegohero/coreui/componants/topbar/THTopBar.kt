@@ -30,6 +30,7 @@ import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
 fun THTopBar(
@@ -105,7 +106,7 @@ fun PreviewTopBar() {
             }
         ) {
             LazyColumn(
-                modifier = Modifier.haze(hazeState),
+                modifier = Modifier.hazeSource(hazeState),
                 state = lazyListState,
                 contentPadding = it,
             ) {

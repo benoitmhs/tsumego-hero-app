@@ -14,7 +14,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.icon.THIcon
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.THSnackbarVisual
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.toIconSpec
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
-import com.mrsanglier.tsumegohero.coreui.extension.foClickable
+import com.mrsanglier.tsumegohero.coreui.extension.thClickable
 import com.mrsanglier.tsumegohero.coreui.extension.surface
 import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
@@ -32,7 +32,7 @@ internal fun ShortSnackbar(
                 shape = THTheme.shape.circle,
                 background = THTheme.colors.surface3,
             )
-            .foClickable(dismiss)
+            .thClickable(dismiss)
             .padding(vertical = THTheme.spacing.small)
             .padding(
                 start = if (snackbarVisual.icon == null) THTheme.spacing.large else THTheme.spacing.small,

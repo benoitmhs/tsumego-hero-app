@@ -1,24 +1,30 @@
 package com.mrsanglier.tsumegohero.dashboard.screens.play
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mrsanglier.tsumegohero.coreui.componants.button.THButton
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_import
+import com.mrsanglier.tsumegohero.coreui.componants.bottombar.THBottomBar
+import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
+import com.mrsanglier.tsumegohero.coreui.componants.button.THButtonState
 import com.mrsanglier.tsumegohero.coreui.componants.screen.LocalPiScreenPadding
+import com.mrsanglier.tsumegohero.coreui.componants.screen.THScreen
+import com.mrsanglier.tsumegohero.coreui.extension.rememberBottomBarElevation
+import com.mrsanglier.tsumegohero.coreui.extension.toIconSpec
 import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
+import com.mrsanglier.tsumegohero.coreui.resources.THDrawable
+import com.mrsanglier.tsumegohero.dashboard.screens.play.composable.TsumegoItemCell
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import io.github.vinceglb.filekit.dialogs.FileKitMode
+import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -27,39 +33,59 @@ fun PlayRoute(
     viewModel: PlayViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val fileKitLauncher = rememberFilePickerLauncher(
+        mode = FileKitMode.Multiple(),
+        type = FileKitType.File(extensions = listOf("txt", "sgf")),
+    ) { files ->
+        files?.let(viewModel::saveTsumegoFiles)
+    }
 
     PlayScreen(
         uiState = uiState,
         navigateToGame = navScope.navigateToGame,
+        onClickImport = fileKitLauncher::launch,
     )
 }
 
 @Composable
 private fun PlayScreen(
     uiState: PlayViewModelState,
-    navigateToGame: () -> Unit,
+    navigateToGame: (String) -> Unit,
+    onClickImport: () -> Unit,
 ) {
-    val hazeState = remember { HazeState() }
+    val lazyState = rememberLazyListState()
+    val bottomBarHazeState = remember { HazeState() }
+    val bottomBarElevation by rememberBottomBarElevation(lazyState)
 
-    Scaffold(
-        backgroundColor = Transparent,
+    THScreen(
+        modifier = Modifier.padding(
+            bottom = LocalPiScreenPadding.current.calculateBottomPadding(),
+        ),
+        bottomBar = {
+            THBottomBar(
+                hazeState = bottomBarHazeState,
+                elevation = bottomBarElevation,
+                primaryButton = THButtonState(
+                    text = "Import sgf".toTextSpec(), // TODO: loco
+                    onClick = onClickImport,
+                    style = ButtonStyle.Secondary,
+                    icon = THDrawable.ic_import.toIconSpec(),
+                ),
+            )
+        }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding()
-                .padding(LocalPiScreenPadding.current)
+                .fillMaxWidth()
+                .hazeSource(bottomBarHazeState)
                 .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            state = lazyState,
         ) {
-            THButton(
-                text = "Play".toTextSpec(), // TODO: loco
-                onClick = navigateToGame,
+            TsumegoItemCell.lazyItems(
+                scope = this,
+                items = uiState.tsugemoItems,
+                onClickItem = navigateToGame,
             )
         }
     }
 }
-
-private val LogoHeight: Dp = 24.dp
-private val logoAspectRatio: Float = 250f / 68f

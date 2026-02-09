@@ -8,9 +8,11 @@ import com.mrsanglier.tsumegohero.game.delegate.GetCropBoardDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.ParseSgfTsumegoDelegate
 import com.mrsanglier.tsumegohero.game.delegate.ParseSgfTsumegoDelegateImpl
 import com.mrsanglier.tsumegohero.game.model.Game
-import com.mrsanglier.tsumegohero.game.sgfCollection
+import com.mrsanglier.tsumegohero.repository.TsumegoRepository
+import kotlinx.coroutines.flow.first
 
 class StartGameUseCase(
+    private val tsumegoRepository: TsumegoRepository,
     parseSgfTsumegoDelegateImpl: ParseSgfTsumegoDelegateImpl,
     getCropBoardDelegateImpl: GetCropBoardDelegateImpl,
     deriveTsumegoDelegateImpl: DeriveTsumegoDelegateImpl,
@@ -18,12 +20,13 @@ class StartGameUseCase(
     GetCropBoardDelegate by getCropBoardDelegateImpl,
     DeriveTsumegoDelegate by deriveTsumegoDelegateImpl {
 
-    operator fun invoke(tsumegoIndex: Int): THResult<Game> = THResult.catchResult {
-        val i = tsumegoIndex % sgfCollection.size
-        val tsumego = parseSgfTsumego(sgfCollection[i])
+    suspend operator fun invoke(tsumegoId: String): THResult<Game> = THResult.catchResult {
+        val sgf = tsumegoRepository.observeGame(tsumegoId).first()
+        val tsumego = parseSgfTsumego(sgf.data)
         val derivedTsumego = deriveTsumego(tsumego)
 
         return@catchResult Game(
+            sgf = sgf,
             tsumego = derivedTsumego,
             board = derivedTsumego.initialBoard,
             moveStack = emptyList(),

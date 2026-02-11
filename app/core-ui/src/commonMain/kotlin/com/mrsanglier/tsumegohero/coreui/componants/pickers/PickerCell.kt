@@ -16,7 +16,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.iconbutton.IconButtonSize
 import com.mrsanglier.tsumegohero.coreui.componants.iconbutton.FOIconButton
 import com.mrsanglier.tsumegohero.coreui.componants.text.THTextResponsive
 import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
-import com.mrsanglier.tsumegohero.coreui.extension.foClickable
+import com.mrsanglier.tsumegohero.coreui.extension.thClickable
 import com.mrsanglier.tsumegohero.coreui.extension.surface
 import com.mrsanglier.tsumegohero.coreui.extension.toIconSpec
 import com.mrsanglier.tsumegohero.coreui.resources.THDrawable
@@ -44,7 +44,7 @@ fun PickerCell(
         Row(
             modifier = Modifier
                 .weight(1f)
-                .foClickable(
+                .thClickable(
                     onClick = onClick,
                     enabled = enabled,
                 )

@@ -17,7 +17,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.icon.IconSpec
 import com.mrsanglier.tsumegohero.coreui.componants.icon.THIcon
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
 import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
-import com.mrsanglier.tsumegohero.coreui.extension.foClickable
+import com.mrsanglier.tsumegohero.coreui.extension.thClickable
 import com.mrsanglier.tsumegohero.coreui.extension.toIconSpec
 import com.mrsanglier.tsumegohero.coreui.resources.THDrawable
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
@@ -33,7 +33,7 @@ fun NavigationRow(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = MinHeight)
-            .foClickable(onClick)
+            .thClickable(onClick)
             .padding(
                 horizontal = THTheme.spacing.large,
                 vertical = THTheme.spacing.small,

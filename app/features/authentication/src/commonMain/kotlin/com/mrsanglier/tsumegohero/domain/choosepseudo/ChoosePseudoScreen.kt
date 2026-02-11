@@ -36,6 +36,7 @@ import com.mrsanglier.tsumegohero.coreui.utils.KeyboardState
 import com.mrsanglier.tsumegohero.coreui.utils.rememberKeyboardState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -98,8 +99,8 @@ private fun ChoosePseudoScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
-                .haze(topBarHazeState)
-                .haze(bottomBarHazeState)
+                .hazeSource(topBarHazeState)
+                .hazeSource(bottomBarHazeState)
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

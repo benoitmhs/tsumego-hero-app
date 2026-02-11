@@ -22,7 +22,9 @@ fun MainNavigation(
         DashboardDestination.composable(
             this,
             DashboardNavScope(
-                navigateToGame = { navController.navigate(GameDestination) }
+                navigateToGame = { tsumegoId ->
+                    navController.navigate(GameDestination(tsumegoId))
+                },
             ),
         )
 

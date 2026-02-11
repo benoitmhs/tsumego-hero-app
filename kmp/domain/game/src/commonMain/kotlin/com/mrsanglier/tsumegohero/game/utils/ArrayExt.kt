@@ -1,15 +1,15 @@
 package com.mrsanglier.tsumegohero.game.utils
 
-import com.mrsanglier.tsumegohero.game.model.Board
+import com.mrsanglier.tsumegohero.game.model.BoardSize
 import com.mrsanglier.tsumegohero.game.model.Grid
 import com.mrsanglier.tsumegohero.game.model.Stone
 import kotlin.random.Random
 
-internal fun Board.zobristHash(): Long {
+internal fun Grid.zobristHash(boardSize: BoardSize): Long {
     var hash = 0L
     for (y in 0 until boardSize.size) {
         for (x in 0 until boardSize.size) {
-            when (grid[y][x]) {
+            when (this[y][x]) {
                 Stone.BLACK -> hash = hash xor ArrayExt.zobristTable[y][x][0]
                 Stone.WHITE -> hash = hash xor ArrayExt.zobristTable[y][x][1]
                 null -> {}

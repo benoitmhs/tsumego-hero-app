@@ -35,7 +35,8 @@ class PlayReviewMoveUseCase(
         return playMoveOnBoard(game.board, move)?.let { board ->
             game.copy(
                 board = board,
-                moveStack = game.moveStack + listOf(node),
+                moveStack = game.moveStack.take(game.reviewIndex) + listOf(node),
+                reviewIndex = game.reviewIndex + 1,
             )
         }
     }

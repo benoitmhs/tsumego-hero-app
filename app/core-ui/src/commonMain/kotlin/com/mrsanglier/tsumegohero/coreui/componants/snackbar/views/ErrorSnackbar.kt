@@ -15,7 +15,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.icon.IconSize
 import com.mrsanglier.tsumegohero.coreui.componants.icon.THIcon
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.THSnackbarVisual
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
-import com.mrsanglier.tsumegohero.coreui.extension.foClickable
+import com.mrsanglier.tsumegohero.coreui.extension.thClickable
 import com.mrsanglier.tsumegohero.coreui.extension.surface
 import com.mrsanglier.tsumegohero.coreui.extension.toIconSpec
 import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
@@ -36,7 +36,7 @@ internal fun ErrorSnackbar(
                 shape = THTheme.shape.roundMedium,
                 background = THTheme.colors.surfaceCritical,
             )
-            .foClickable(dismiss)
+            .thClickable(dismiss)
             .padding(
                 vertical = THTheme.spacing.small,
                 horizontal = THTheme.spacing.medium,

@@ -1,11 +1,17 @@
 package com.mrsanglier.tsumegohero.game.game
 
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.mrsanglier.tsumegohero.app.coreui.resources.ic_arrow_forward
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_next
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_previous
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_refresh
 import com.mrsanglier.tsumegohero.core.error.THGameError
 import com.mrsanglier.tsumegohero.core.extension.handleResult
+import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStatus
 import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
 import com.mrsanglier.tsumegohero.coreui.componants.button.THButtonState
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.SnackbarManager
@@ -19,6 +25,8 @@ import com.mrsanglier.tsumegohero.game.model.Cell
 import com.mrsanglier.tsumegohero.game.model.Game
 import com.mrsanglier.tsumegohero.game.model.SgfNodeOutcome
 import com.mrsanglier.tsumegohero.game.model.Stone
+import com.mrsanglier.tsumegohero.game.usecase.GetNextTsumegoIdUseCase
+import com.mrsanglier.tsumegohero.game.usecase.NavigateReviewUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayFreeMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayOpponentMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayPlayerMoveUseCase
@@ -32,12 +40,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-private val OPPONENT_TURN_DELAY: Duration = 300.milliseconds
+internal val OPPONENT_TURN_DELAY: Duration = 300.milliseconds
 
 class GameViewModel(
     private val playFreeMoveUseCase: PlayFreeMoveUseCase,
@@ -48,18 +55,20 @@ class GameViewModel(
     private val startReviewUseCase: StartReviewUseCase,
     private val restartGameUseCase: RestartGameUseCase,
     private val snackbarManager: SnackbarManager,
+    private val getNextTsumegoIdUseCase: GetNextTsumegoIdUseCase,
+    private val navigateReviewUseCase: NavigateReviewUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val args: GameDestination = savedStateHandle.toRoute()
 
     private val gameFlow = MutableStateFlow<Game?>(null)
     private val lockTouch = MutableStateFlow(false)
-    private val indexCollection = MutableStateFlow(2)
 
     init {
 
         viewModelScope.launch {
-            indexCollection.collect { i ->
-                loadTsumego(i)
-            }
+            loadTsumego(args.tsumegoId)
         }
 
         viewModelScope.launch {
@@ -84,6 +93,7 @@ class GameViewModel(
             } ?: (null to null)
 
             GameViewModelState(
+                title = game.sgf.name.toTextSpec(),
                 whiteStones = game.board.whiteStones,
                 blackStones = game.board.blackStones,
                 lastMove = game.lastMove?.move,
@@ -118,7 +128,17 @@ class GameViewModel(
                     } else ButtonStyle.Secondary,
                     text = "Restart".toTextSpec(), // TODO: loco
                 ),
+                isReview = game.isReview,
                 reviewButton = defaultReviewButton.takeIf { !game.isReview && outcome != SgfNodeOutcome.NONE },
+                reviewPreviousButton = defaultReviewPreviousButton
+                    .takeIf { game.isReview }
+                    ?.copy(enabled = game.reviewIndex > 0),
+                reviewNextButton = defaultReviewNextButton
+                    .takeIf { game.isReview }
+                    ?.copy(enabled = game.reviewIndex < (game.moveStack.size - 1) || game.nextGoodMove.isNotEmpty()),
+                reviewResetButton = defaultReviewResetButton
+                    .takeIf { game.isReview }
+                    ?.copy(enabled = game.moveStack.isNotEmpty()),
                 goodMoves = goodMoves?.map { it.move.gameMove }?.toSet(),
                 badMoves = badMoves?.map { it.move.gameMove }?.toSet(),
             )
@@ -165,6 +185,17 @@ class GameViewModel(
         }
     }
 
+    private fun navigateReview(isBack: Boolean) {
+        gameFlow.value?.let { game ->
+            navigateReviewUseCase(
+                game = game,
+                isBack = isBack,
+            )
+        }?.let { newGame ->
+            gameFlow.value = newGame
+        }
+    }
+
     private fun playReviewMove(cell: Cell, game: Game) {
         playReviewMoveUseCase(cell = cell, game = game)?.let { gameUpdated ->
             gameFlow.value = gameUpdated
@@ -172,11 +203,27 @@ class GameViewModel(
     }
 
     private fun next() {
-        indexCollection.update { it + 1 }
+        loadNextTsumego(isPrevious = false)
     }
 
     fun previous() {
-        indexCollection.update { it - 1 }
+        loadNextTsumego(isPrevious = true)
+    }
+
+    private fun loadNextTsumego(isPrevious: Boolean) {
+        gameFlow.value?.sgf?.id?.let { tsumegoId ->
+            viewModelScope.launch {
+                getNextTsumegoIdUseCase(
+                    currentTsumegoId = tsumegoId,
+                    isPrevious = isPrevious,
+                ).handleResult(
+                    onSuccess = { tsumegoId ->
+                        loadTsumego(tsumegoId)
+                    },
+                    onFailure = snackbarManager::showError,
+                )
+            }
+        }
     }
 
     private fun reset() {
@@ -197,8 +244,8 @@ class GameViewModel(
         resetButton = defaultRestartButton,
     )
 
-    private fun loadTsumego(index: Int) {
-        val result = startGameUseCase(index)
+    private suspend fun loadTsumego(tsumegoId: String) {
+        val result = startGameUseCase(tsumegoId)
         result.data?.let { data ->
             gameFlow.value = data
         }
@@ -239,5 +286,29 @@ class GameViewModel(
             text = "📖 Review".toTextSpec(), // TODO: loco
             style = ButtonStyle.Secondary,
             onClick = ::startReview,
+        )
+
+    private val defaultReviewPreviousButton: THButtonState
+        get() = THButtonState(
+            text = null,
+            style = ButtonStyle.Text,
+            onClick = { navigateReview(true) },
+            icon = THDrawable.ic_previous.toIconSpec(),
+        )
+
+    private val defaultReviewNextButton: THButtonState
+        get() = THButtonState(
+            text = null,
+            style = ButtonStyle.Text,
+            onClick = { navigateReview(false) },
+            icon = THDrawable.ic_next.toIconSpec(),
+        )
+
+    private val defaultReviewResetButton: THButtonState
+        get() = THButtonState(
+            text = null,
+            style = ButtonStyle.Text,
+            onClick = ::startReview,
+            icon = THDrawable.ic_refresh.toIconSpec(),
         )
 }

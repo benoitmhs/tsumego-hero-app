@@ -38,8 +38,8 @@ import com.mrsanglier.tsumegohero.coreui.utils.ShadowColor
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 
 fun Modifier.surface(
     shape: Shape = RectangleShape,
@@ -90,12 +90,12 @@ fun Modifier.surface(
     .clip(shape)
 
 @Composable
-fun Modifier.foClickable(
+fun Modifier.thClickable(
     onClick: (() -> Unit)?,
     enabled: Boolean = true,
     role: Role? = null,
     interactionSource: MutableInteractionSource? = remember { MutableInteractionSource() },
-    indication: Indication? = ripple(),
+    indication: Indication? = ripple(color = THTheme.colors.content),
 ): Modifier =
     this.then(
         if (onClick == null) {
@@ -140,23 +140,29 @@ fun Modifier.positionAwareImePadding() = composed {
 }
 
 fun Modifier.foHazeChild(
-    state: HazeState,
+    state: HazeState?,
     backgroundColor: Color,
-): Modifier = this.hazeChild(
-    state = state,
-    style = HazeStyle(
-        backgroundColor = backgroundColor,
-        tint = HazeTint(backgroundColor.copy(alpha = 0.5f)),
-        blurRadius = BlurRadius,
-        noiseFactor = 0.1f,
-    )
+): Modifier = this.then(
+    if (state != null) {
+        Modifier.hazeEffect(
+            state = state,
+            style = HazeStyle(
+                backgroundColor = backgroundColor,
+                tint = HazeTint(backgroundColor.copy(alpha = 0.5f)),
+                blurRadius = BlurRadius,
+                noiseFactor = 0.1f,
+            )
+        )
+    } else {
+        Modifier.background(backgroundColor)
+    }
 )
 
-fun Modifier.safeHaze(
+fun Modifier.safeHazeSource(
     state: HazeState?,
 ): Modifier = this.then(
     if (state != null) {
-        Modifier.haze(state)
+        Modifier.hazeSource(state)
     } else {
         Modifier
     }
@@ -179,4 +185,5 @@ fun Modifier.drawLineTop(
     }
 }
 
-private val BlurRadius: Dp = 8.dp
+private
+val BlurRadius: Dp = 8.dp

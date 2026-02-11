@@ -11,7 +11,7 @@ import com.mrsanglier.tsumegohero.coreui.componants.floatingbutton.RoundFloating
 import com.mrsanglier.tsumegohero.coreui.componants.icon.IconSpec
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
 import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
-import com.mrsanglier.tsumegohero.coreui.extension.foClickable
+import com.mrsanglier.tsumegohero.coreui.extension.thClickable
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 
 @Composable
@@ -25,7 +25,7 @@ fun FabRow(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(THTheme.spacing.medium),
-        modifier = modifier.foClickable(onClick),
+        modifier = modifier.thClickable(onClick),
     ) {
         RoundFloatingButton(
             iconSpec = icon,

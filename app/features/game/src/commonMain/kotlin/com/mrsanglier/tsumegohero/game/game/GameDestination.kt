@@ -6,13 +6,18 @@ import com.mrsanglier.tsumegohero.coreui.navigation.THDestination
 import kotlinx.serialization.Serializable
 
 @Serializable
-object GameDestination : THDestination {
-    fun composable(
-        navGraphBuilder: NavGraphBuilder,
-        navScope: GameNavScope,
-    ) {
-        navGraphBuilder.composable<GameDestination> {
-            GameRoute(navScope)
+data class GameDestination(
+    val tsumegoId: String,
+) : THDestination {
+
+    companion object {
+        fun composable(
+            navGraphBuilder: NavGraphBuilder,
+            navScope: GameNavScope,
+        ) {
+            navGraphBuilder.composable<GameDestination> {
+                GameRoute(navScope)
+            }
         }
     }
 }

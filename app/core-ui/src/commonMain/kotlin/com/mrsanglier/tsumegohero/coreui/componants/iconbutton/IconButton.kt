@@ -12,7 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import com.mrsanglier.tsumegohero.coreui.componants.icon.IconSpec
 import com.mrsanglier.tsumegohero.coreui.componants.icon.THIcon
-import com.mrsanglier.tsumegohero.coreui.extension.foClickable
+import com.mrsanglier.tsumegohero.coreui.extension.thClickable
 import com.mrsanglier.tsumegohero.coreui.theme.THTheme
 
 @Composable
@@ -30,7 +30,7 @@ fun FOIconButton(
         modifier = modifier
             .size(size.containerSize)
             .clip(THTheme.shape.circle)
-            .foClickable(
+            .thClickable(
                 onClick = onClick,
                 enabled = enabled,
                 role = Role.Button,

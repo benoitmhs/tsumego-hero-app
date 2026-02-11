@@ -41,6 +41,22 @@ data class THButtonState(
         }
     }
 
+    fun copy(
+        enabled: Boolean,
+        text: TextSpec? = this.text,
+        onClick: () -> Unit = this.onClick,
+        style: ButtonStyle = this.style,
+        icon: IconSpec? = this.icon,
+        trailingIcon: IconSpec? = this.trailingIcon,
+    ): THButtonState = this.copy(
+        text = text,
+        onClick = onClick,
+        status = if (enabled) ButtonStatus.Enabled else ButtonStatus.Disabled,
+        style = style,
+        icon = icon,
+        trailingIcon = trailingIcon,
+    )
+
     companion object Companion {
         private val contentType: String = "PiButton"
     }

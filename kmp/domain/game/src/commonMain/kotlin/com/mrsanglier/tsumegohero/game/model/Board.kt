@@ -10,7 +10,9 @@ class Board(
         Array(boardSize.size) {
             Array(boardSize.size) { null }
         },
+    val moveIndex: Int = 0,
     val previousHash: Long? = null,
+    val capturedStone: Map<Int, Set<Cell>> = mapOf(),
 ) {
 
     val blackStones: Set<Cell>
@@ -32,11 +34,16 @@ class Board(
         }.toSet()
 
     fun copy(
-        previousHash: Long? = this.previousHash
+        previousHash: Long? = this.previousHash,
+        moveIndex: Int = this.moveIndex,
+        capturedStone: Map<Int, Set<Cell>> = this.capturedStone,
+        grid: Grid = this.grid.copy(),
     ): Board = Board(
         boardSize = boardSize,
-        grid = grid.copy(),
+        grid = grid,
         previousHash = previousHash,
+        moveIndex = moveIndex,
+        capturedStone = capturedStone,
     )
 
     fun getStoneAt(cell: Cell): Stone? =

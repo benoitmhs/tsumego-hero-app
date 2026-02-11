@@ -6,8 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.mrsanglier.tsumegohero.app.coreui.resources.ic_arrow_forward
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_next
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_previous
+import com.mrsanglier.tsumegohero.app.coreui.resources.ic_refresh
 import com.mrsanglier.tsumegohero.core.error.THGameError
 import com.mrsanglier.tsumegohero.core.extension.handleResult
+import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStatus
 import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
 import com.mrsanglier.tsumegohero.coreui.componants.button.THButtonState
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.SnackbarManager
@@ -22,6 +26,7 @@ import com.mrsanglier.tsumegohero.game.model.Game
 import com.mrsanglier.tsumegohero.game.model.SgfNodeOutcome
 import com.mrsanglier.tsumegohero.game.model.Stone
 import com.mrsanglier.tsumegohero.game.usecase.GetNextTsumegoIdUseCase
+import com.mrsanglier.tsumegohero.game.usecase.NavigateReviewUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayFreeMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayOpponentMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayPlayerMoveUseCase
@@ -39,7 +44,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-private val OPPONENT_TURN_DELAY: Duration = 300.milliseconds
+internal val OPPONENT_TURN_DELAY: Duration = 300.milliseconds
 
 class GameViewModel(
     private val playFreeMoveUseCase: PlayFreeMoveUseCase,
@@ -51,6 +56,7 @@ class GameViewModel(
     private val restartGameUseCase: RestartGameUseCase,
     private val snackbarManager: SnackbarManager,
     private val getNextTsumegoIdUseCase: GetNextTsumegoIdUseCase,
+    private val navigateReviewUseCase: NavigateReviewUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -122,7 +128,17 @@ class GameViewModel(
                     } else ButtonStyle.Secondary,
                     text = "Restart".toTextSpec(), // TODO: loco
                 ),
+                isReview = game.isReview,
                 reviewButton = defaultReviewButton.takeIf { !game.isReview && outcome != SgfNodeOutcome.NONE },
+                reviewPreviousButton = defaultReviewPreviousButton
+                    .takeIf { game.isReview }
+                    ?.copy(enabled = game.reviewIndex > 0),
+                reviewNextButton = defaultReviewNextButton
+                    .takeIf { game.isReview }
+                    ?.copy(enabled = game.reviewIndex < (game.moveStack.size - 1) || game.nextGoodMove.isNotEmpty()),
+                reviewResetButton = defaultReviewResetButton
+                    .takeIf { game.isReview }
+                    ?.copy(enabled = game.moveStack.isNotEmpty()),
                 goodMoves = goodMoves?.map { it.move.gameMove }?.toSet(),
                 badMoves = badMoves?.map { it.move.gameMove }?.toSet(),
             )
@@ -166,6 +182,17 @@ class GameViewModel(
                     lockTouch.value = false
                 },
             )
+        }
+    }
+
+    private fun navigateReview(isBack: Boolean) {
+        gameFlow.value?.let { game ->
+            navigateReviewUseCase(
+                game = game,
+                isBack = isBack,
+            )
+        }?.let { newGame ->
+            gameFlow.value = newGame
         }
     }
 
@@ -259,5 +286,29 @@ class GameViewModel(
             text = "📖 Review".toTextSpec(), // TODO: loco
             style = ButtonStyle.Secondary,
             onClick = ::startReview,
+        )
+
+    private val defaultReviewPreviousButton: THButtonState
+        get() = THButtonState(
+            text = null,
+            style = ButtonStyle.Text,
+            onClick = { navigateReview(true) },
+            icon = THDrawable.ic_previous.toIconSpec(),
+        )
+
+    private val defaultReviewNextButton: THButtonState
+        get() = THButtonState(
+            text = null,
+            style = ButtonStyle.Text,
+            onClick = { navigateReview(false) },
+            icon = THDrawable.ic_next.toIconSpec(),
+        )
+
+    private val defaultReviewResetButton: THButtonState
+        get() = THButtonState(
+            text = null,
+            style = ButtonStyle.Text,
+            onClick = ::startReview,
+            icon = THDrawable.ic_refresh.toIconSpec(),
         )
 }

@@ -18,6 +18,7 @@ import com.mrsanglier.tsumegohero.app.coreui.resources.ic_arrow_back
 import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
 import com.mrsanglier.tsumegohero.coreui.componants.button.THButton
 import com.mrsanglier.tsumegohero.coreui.componants.screen.THScreen
+import com.mrsanglier.tsumegohero.coreui.componants.spacer.THVerticalSpacer
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
 import com.mrsanglier.tsumegohero.coreui.componants.topbar.THTopBar
 import com.mrsanglier.tsumegohero.coreui.componants.topbar.TopBarAction
@@ -75,42 +76,65 @@ private fun GameScreen(
                     .fillMaxWidth()
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(THTheme.spacing.huge),
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(THTheme.spacing.large, alignment = Alignment.Bottom),
                 ) {
                     THText(
                         text = uiState.playerStone ?: "".toTextSpec(),
                         style = THTheme.typography.title200
                     )
-                }
 
-                Board(
-                    whiteStones = uiState.whiteStones,
-                    blackStones = uiState.blackStones,
-                    cropBoard = uiState.cropBoard,
-                    onClickCell = onClickCell,
-                    lastMove = uiState.lastMove,
-                    goodMoves = uiState.goodMoves,
-                    badMoves = uiState.badMoves,
-                    modifier = Modifier
-                        .border(
-                            width = THTheme.stroke.regular,
-                            color = uiState.borderColor(),
-                            shape = THTheme.shape.roundSmall,
-                        )
-                )
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(THTheme.spacing.xlarge),
-                ) {
                     THText(
                         text = uiState.result ?: "".toTextSpec(),
-                        style = THTheme.typography.title200,
+                        style = THTheme.typography.title100,
                     )
+                }
+
+                THTheme.spacing.small.THVerticalSpacer()
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(THTheme.spacing.xsmall),
+                ) {
+                    Board(
+                        whiteStones = uiState.whiteStones,
+                        blackStones = uiState.blackStones,
+                        cropBoard = uiState.cropBoard,
+                        onClickCell = onClickCell,
+                        lastMove = uiState.lastMove,
+                        goodMoves = uiState.goodMoves,
+                        badMoves = uiState.badMoves,
+                        modifier = Modifier
+                            .border(
+                                width = THTheme.stroke.regular,
+                                color = uiState.borderColor(),
+                                shape = THTheme.shape.roundSmall,
+                            )
+                    )
+                    THText(
+                        modifier = Modifier.padding(horizontal = THTheme.spacing.small),
+                        text = (if (uiState.isReview) "Review 📖" else "").toTextSpec(),
+                        style = THTheme.typography.label100,
+                    )
+                }
+
+                THTheme.spacing.xlarge.THVerticalSpacer()
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = THTheme.spacing.large,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                ) {
+                    uiState.reviewPreviousButton?.Content()
+                    uiState.reviewResetButton?.Content()
                     uiState.reviewButton?.Content()
+                    uiState.reviewNextButton?.Content()
                 }
             }
 

@@ -21,7 +21,11 @@ data class GameViewModelState(
     val borderColor: ComposeProvider<Color> = { Color.Transparent },
     val nextButton: THButtonState,
     val resetButton: THButtonState,
+    val isReview: Boolean = false,
     val reviewButton: THButtonState? = null,
+    val reviewPreviousButton: THButtonState? = null,
+    val reviewNextButton: THButtonState? = null,
+    val reviewResetButton: THButtonState? = null,
     val goodMoves: Set<Cell>? = null,
     val badMoves: Set<Cell>? = null,
 )

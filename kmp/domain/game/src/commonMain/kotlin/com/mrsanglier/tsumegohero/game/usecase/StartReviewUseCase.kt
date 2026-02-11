@@ -14,7 +14,8 @@ class StartReviewUseCase {
                 children = game.tsumego.root.children
                     .map { it.toReviewNode() }
                     .toMutableList(),
-            )
+            ),
+            reviewIndex = 0,
         )
     }
 

@@ -9,12 +9,17 @@ data class Game(
     val tsumego: Tsumego,
     val cropBoard: CropBoard,
     val reviewRoot: RootNode? = null,
+    val reviewIndex: Int = 0,
 ) {
     val playerStone: Stone
         get() = tsumego.playerStone
 
     val lastMove: MoveNode?
-        get() = moveStack.lastOrNull()
+        get() = when {
+            !isReview -> moveStack.lastOrNull()
+            reviewIndex == 0 -> null
+            else -> moveStack.getOrNull((reviewIndex - 1))
+        }
 
     val isOpponentTurn: Boolean
         get() = lastMove?.move?.stone == playerStone
@@ -28,4 +33,7 @@ data class Game(
     val reviewNextMove: List<MoveNode>? = if (isReview) {
         lastMove?.children ?: reviewRoot?.children
     } else null
+
+    val nextGoodMove: List<MoveNode>
+        get() = reviewNextMove?.filter { it.outcome == SgfNodeOutcome.SUCCESS }.orEmpty()
 }

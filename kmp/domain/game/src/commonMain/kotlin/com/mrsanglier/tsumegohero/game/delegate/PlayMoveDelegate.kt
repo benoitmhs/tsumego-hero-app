@@ -31,17 +31,25 @@ class PlayMoveDelegateImpl() : PlayMoveDelegate {
             grid[y][x] = stone
 
             // Capture opponent groups
+            val captured = mutableSetOf<Cell>()
             neighbors(cell)
                 .filter { neighbor ->
                     getStoneAt(neighbor) == stone.getOpponent()
                 }
                 .forEach { opponentNeighbor ->
                     val group = group(opponentNeighbor)
-                    if (liberties(group).isEmpty())
+                    if (liberties(group).isEmpty()) {
+                        captured.addAll(group)
                         group.forEach { (xCaptured, yCaptured) ->
                             grid[yCaptured][xCaptured] = null
                         }
+                    }
                 }
+
+            val allCapturedStone = this.capturedStone.toMutableMap()
+            if (captured.isNotEmpty()) {
+                allCapturedStone[moveIndex] = captured
+            }
 
             // Suicide check
             val liberties = liberties(group(cell))
@@ -50,13 +58,17 @@ class PlayMoveDelegateImpl() : PlayMoveDelegate {
             }
 
             // Simple ko check
-            val newHash = zobristHash()
-            val currentHash = previousBoard.zobristHash()
+            val newHash = grid.zobristHash(boardSize)
+            val currentHash = previousBoard.grid.zobristHash(boardSize)
 
             if (previousHash != null && previousHash == newHash) {
                 return null
             }
-            return copy(previousHash = currentHash)
+            return copy(
+                previousHash = currentHash,
+                moveIndex = moveIndex + 1,
+                capturedStone = allCapturedStone,
+            )
         }
     }
 }

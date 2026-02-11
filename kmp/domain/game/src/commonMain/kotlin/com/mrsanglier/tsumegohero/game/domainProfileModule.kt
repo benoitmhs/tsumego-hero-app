@@ -3,8 +3,10 @@ package com.mrsanglier.tsumegohero.game
 import com.mrsanglier.tsumegohero.game.delegate.DeriveTsumegoDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.GetCropBoardDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.ParseSgfTsumegoDelegateImpl
+import com.mrsanglier.tsumegohero.game.delegate.PlayMoveBackDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.PlayMoveDelegateImpl
 import com.mrsanglier.tsumegohero.game.usecase.GetNextTsumegoIdUseCase
+import com.mrsanglier.tsumegohero.game.usecase.NavigateReviewUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayFreeMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayOpponentMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayPlayerMoveUseCase
@@ -19,6 +21,7 @@ import org.koin.dsl.module
 val domainGameModule: Module = module {
     // UseCase
     singleOf(::GetNextTsumegoIdUseCase)
+    singleOf(::NavigateReviewUseCase)
     singleOf(::PlayFreeMoveUseCase)
     singleOf(::PlayPlayerMoveUseCase)
     singleOf(::PlayReviewMoveUseCase)
@@ -32,4 +35,5 @@ val domainGameModule: Module = module {
     singleOf(::GetCropBoardDelegateImpl)
     singleOf(::ParseSgfTsumegoDelegateImpl)
     singleOf(::PlayMoveDelegateImpl)
+    singleOf(::PlayMoveBackDelegateImpl)
 }

@@ -5,10 +5,10 @@ import com.mrsanglier.tsumegohero.core.result.THResult
 
 inline fun <T> THResult<T>.handleResult(
     onSuccess: (data: T) -> Unit,
-    onFailure: (THError?) -> Unit,
+    onError: (error: THError?) -> Unit,
 ) {
     when (this) {
-        is THResult.Failure<T> -> onFailure(error)
+        is THResult.Failure<T> -> onError(error)
         is THResult.Success<T> -> onSuccess(successData)
     }
 }

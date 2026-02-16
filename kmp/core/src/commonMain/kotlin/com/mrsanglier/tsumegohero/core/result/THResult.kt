@@ -49,41 +49,7 @@ sealed class THResult<out T> {
     }
 
     companion object Companion {
-        suspend fun <T> suspendWithFOResult(
-            mapError: (THError) -> THError = { it },
-            block: suspend () -> T,
-        ): THResult<T> = suspendFOResult(
-            mapError = mapError,
-        ) {
-            Success(block())
-        }
-
-        suspend fun <T> suspendFOResult(
-            mapError: (THError) -> THError = { it },
-            block: suspend () -> THResult<T>,
-        ): THResult<T> =
-            try {
-                block()
-            } catch (e: THError) {
-                val piError = mapError(e)
-                Logger.e { e.toString() }
-                Logger.e { piError.stackTraceToString() }
-                Failure(piError)
-            }
-
         inline fun <reified T> catchResult(
-            mapError: (THError) -> THError = { it },
-            block: () -> T,
-        ): THResult<T> =
-            try {
-                Success(block())
-            } catch (e: THError) {
-                val piError = mapError(e)
-                Logger.e { piError.stackTraceToString() }
-                Failure(piError)
-            }
-
-        fun <T> withFOResult(
             mapError: (THError) -> THError = { it },
             block: () -> T,
         ): THResult<T> =

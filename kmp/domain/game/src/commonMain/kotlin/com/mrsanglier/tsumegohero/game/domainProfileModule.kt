@@ -6,6 +6,7 @@ import com.mrsanglier.tsumegohero.game.delegate.ParseSgfTsumegoDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.PlayMoveBackDelegateImpl
 import com.mrsanglier.tsumegohero.game.delegate.PlayMoveDelegateImpl
 import com.mrsanglier.tsumegohero.game.usecase.GetNextTsumegoIdUseCase
+import com.mrsanglier.tsumegohero.game.usecase.ImportTsumegoUseCase
 import com.mrsanglier.tsumegohero.game.usecase.NavigateReviewUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayFreeMoveUseCase
 import com.mrsanglier.tsumegohero.game.usecase.PlayOpponentMoveUseCase
@@ -21,6 +22,7 @@ import org.koin.dsl.module
 val domainGameModule: Module = module {
     // UseCase
     singleOf(::GetNextTsumegoIdUseCase)
+    singleOf(::ImportTsumegoUseCase)
     singleOf(::NavigateReviewUseCase)
     singleOf(::PlayFreeMoveUseCase)
     singleOf(::PlayPlayerMoveUseCase)

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mrsanglier.tsumegohero.coreui.componants.text.THText
+import com.mrsanglier.tsumegohero.coreui.componants.text.THTextResponsive
 import com.mrsanglier.tsumegohero.coreui.componants.text.TextSpec
 import com.mrsanglier.tsumegohero.coreui.extension.foHazeChild
 import com.mrsanglier.tsumegohero.coreui.extension.rememberTopBarElevation
@@ -69,7 +70,7 @@ fun THTopBar(
                 modifier = Modifier.weight(1f)
             ) {
                 title?.let {
-                    THText(
+                    THTextResponsive(
                         text = title,
                         style = THTheme.typography.title200,
                         modifier = Modifier.padding(horizontal = THTheme.spacing.medium),

@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mrsanglier.tsumegohero.app.coreui.resources.ic_import
 import com.mrsanglier.tsumegohero.coreui.componants.bottombar.THBottomBar
-import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
 import com.mrsanglier.tsumegohero.coreui.componants.button.THButtonState
 import com.mrsanglier.tsumegohero.coreui.componants.screen.LocalPiScreenPadding
 import com.mrsanglier.tsumegohero.coreui.componants.screen.THScreen
@@ -65,10 +64,9 @@ private fun PlayScreen(
             THBottomBar(
                 hazeState = bottomBarHazeState,
                 elevation = bottomBarElevation,
-                primaryButton = THButtonState(
+                secondaryButton = THButtonState(
                     text = "Import sgf".toTextSpec(), // TODO: loco
                     onClick = onClickImport,
-                    style = ButtonStyle.Secondary,
                     icon = THDrawable.ic_import.toIconSpec(),
                 ),
             )

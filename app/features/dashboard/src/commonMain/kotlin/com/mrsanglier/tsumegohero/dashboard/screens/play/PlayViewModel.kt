@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.mrsanglier.tsumegohero.core.extension.handleResult
 import com.mrsanglier.tsumegohero.coreui.componants.loading.LoadingManager
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.SnackbarManager
+import com.mrsanglier.tsumegohero.coreui.componants.snackbar.THSnackbarState
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.showDone
-import com.mrsanglier.tsumegohero.coreui.componants.snackbar.showError
 import com.mrsanglier.tsumegohero.coreui.extension.toTextSpec
 import com.mrsanglier.tsumegohero.dashboardgame.usecase.GetTsumegoItemUseCase
-import com.mrsanglier.tsumegohero.dashboardgame.usecase.ImportTsumegoUseCase
 import com.mrsanglier.tsumegohero.dashboardgame.usecase.PrepopulateTsumegoDBUseCase
+import com.mrsanglier.tsumegohero.game.usecase.ImportTsumegoUseCase
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.nameWithoutExtension
 import io.github.vinceglb.filekit.readString
@@ -46,12 +46,29 @@ class PlayViewModel(
                     it.nameWithoutExtension to it.readString()
                 }
 
-                importTsumegoUseCase(filesMap).handleResult(
-                    onSuccess = {
-                        snackbarManager.showDone("file imported".toTextSpec()) // TODO: loco
-                    },
-                    onFailure = snackbarManager::showError,
-                )
+                val fileNamesError = mutableListOf<String>()
+
+                filesMap.forEach { (fileName, data) ->
+                    importTsumegoUseCase(
+                        fileName = fileName,
+                        sgfData = data,
+                    ).handleResult(
+                        onSuccess = {},
+                        onError = {
+                            fileNamesError.add(fileName)
+                        },
+                    )
+                }
+
+                if (fileNamesError.isNotEmpty()) {
+                    snackbarManager.showSnackBar(
+                        THSnackbarState.Error(
+                            text = "Sgf format not supported for file ${fileNamesError.joinToString()}".toTextSpec(),
+                        )
+                    )
+                } else {
+                    snackbarManager.showDone("Tsumego imported".toTextSpec())
+                }
             }
         }
     }

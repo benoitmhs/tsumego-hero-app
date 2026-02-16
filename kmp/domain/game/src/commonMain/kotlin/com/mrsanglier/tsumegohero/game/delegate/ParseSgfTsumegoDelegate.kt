@@ -14,7 +14,7 @@ interface ParseSgfTsumegoDelegate {
     fun parseSgfTsumego(sgf: String): Tsumego
 }
 
-class ParseSgfTsumegoDelegateImpl() : ParseSgfTsumegoDelegate {
+class ParseSgfTsumegoDelegateImpl : ParseSgfTsumegoDelegate {
     override fun parseSgfTsumego(sgf: String): Tsumego {
         val cleaned = sgf.replace(Regex("\\s"), "")
 
@@ -25,15 +25,27 @@ class ParseSgfTsumegoDelegateImpl() : ParseSgfTsumegoDelegate {
 
         val board = Board(boardSize)
 
-        parseInitialStones(cleaned, "AB").forEach { cell ->
-            board.setupStone(cell, Stone.BLACK)
-        }
-        parseInitialStones(cleaned, "AW").forEach { cell ->
-            board.setupStone(cell, Stone.WHITE)
-        }
+        parseInitialStones(cleaned, "AB")
+            .ifEmpty {
+                throw THGameError.Code.SgfFormatNotSupported.toError("Invalid initial black stones")
+            }
+            .forEach { cell ->
+                board.setupStone(cell, Stone.BLACK)
+            }
+        parseInitialStones(cleaned, "AW")
+            .ifEmpty {
+                throw THGameError.Code.SgfFormatNotSupported.toError("Invalid initial white stones")
+            }
+            .forEach { cell ->
+                board.setupStone(cell, Stone.WHITE)
+            }
 
         val tokens = tokenize(cleaned).drop(2)
         val root = parseTree(tokens)
+
+        if (root.children.isEmpty()) {
+            throw THGameError.Code.SgfFormatNotSupported.toError("Invalid node format")
+        }
 
         return Tsumego(
             initialBoard = board,

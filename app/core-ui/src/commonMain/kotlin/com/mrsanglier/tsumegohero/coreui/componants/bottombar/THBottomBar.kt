@@ -88,7 +88,7 @@ fun THBottomBar(
                     modifier = Modifier.weight(1f),
                 )
                 secondaryButton?.copy(
-                    style = ButtonStyle.Outlined,
+                    style = ButtonStyle.Secondary,
                 )?.Content(
                     modifier = Modifier.weight(1f),
                 )

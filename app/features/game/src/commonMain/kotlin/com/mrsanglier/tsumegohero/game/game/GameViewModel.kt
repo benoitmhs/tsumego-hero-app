@@ -11,7 +11,6 @@ import com.mrsanglier.tsumegohero.app.coreui.resources.ic_previous
 import com.mrsanglier.tsumegohero.app.coreui.resources.ic_refresh
 import com.mrsanglier.tsumegohero.core.error.THGameError
 import com.mrsanglier.tsumegohero.core.extension.handleResult
-import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStatus
 import com.mrsanglier.tsumegohero.coreui.componants.button.ButtonStyle
 import com.mrsanglier.tsumegohero.coreui.componants.button.THButtonState
 import com.mrsanglier.tsumegohero.coreui.componants.snackbar.SnackbarManager
@@ -173,7 +172,7 @@ class GameViewModel(
                 onSuccess = { data ->
                     gameFlow.value = data
                 },
-                onFailure = { error ->
+                onError = { error ->
                     when (error?.code) {
                         THGameError.Code.InvalidMove, THGameError.Code.WrongPlayerTurn -> Unit
 
@@ -220,7 +219,7 @@ class GameViewModel(
                     onSuccess = { tsumegoId ->
                         loadTsumego(tsumegoId)
                     },
-                    onFailure = snackbarManager::showError,
+                    onError = snackbarManager::showError,
                 )
             }
         }
@@ -245,24 +244,25 @@ class GameViewModel(
     )
 
     private suspend fun loadTsumego(tsumegoId: String) {
-        val result = startGameUseCase(tsumegoId)
-        result.data?.let { data ->
-            gameFlow.value = data
-        }
+        startGameUseCase(tsumegoId).handleResult(
+            onSuccess = { data ->
+                gameFlow.value = data
+            },
+            onError = snackbarManager::showError,
+        )
     }
 
     private suspend fun playOpponentTurn(game: Game) {
-
         game.lastMove?.children?.randomOrNull()?.let { opponentNode ->
-
-            playOpponentMoveUseCase(game).handleResult(onSuccess = { data ->
-                if (data != null) {
-                    delay(OPPONENT_TURN_DELAY)
-                    gameFlow.emit(data)
-                }
-            }, onFailure = { error ->
-                snackbarManager.showError(error)
-            })
+            playOpponentMoveUseCase(game).handleResult(
+                onSuccess = { data ->
+                    if (data != null) {
+                        delay(OPPONENT_TURN_DELAY)
+                        gameFlow.emit(data)
+                    }
+                },
+                onError = snackbarManager::showError,
+            )
         }
     }
 
